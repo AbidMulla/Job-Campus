@@ -5,6 +5,40 @@ import BreadCrumbs from '@/components/admin/BreadCrumbs';
 
 export default function AdminDashboard() {
   const [selectedPeriod, setSelectedPeriod] = useState('7d');
+  const [notes, setNotes] = useState([
+    {
+      id: 1,
+      title: 'Important Meeting',
+      content: 'Team meeting scheduled for tomorrow at 2 PM to discuss Q4 goals.',
+      createdAt: '2024-01-15'
+    },
+    {
+      id: 2,
+      title: 'System Update',
+      content: 'Remember to update the server before the weekend maintenance window.',
+      createdAt: '2024-01-14'
+    }
+  ]);
+  const [newNote, setNewNote] = useState({ title: '', content: '' });
+  const [isAddingNote, setIsAddingNote] = useState(false);
+
+  const handleAddNote = () => {
+    if (newNote.title.trim() && newNote.content.trim()) {
+      const note = {
+        id: Date.now(),
+        title: newNote.title,
+        content: newNote.content,
+        createdAt: new Date().toISOString().split('T')[0]
+      };
+      setNotes([note, ...notes]);
+      setNewNote({ title: '', content: '' });
+      setIsAddingNote(false);
+    }
+  };
+
+  const handleDeleteNote = (id: number) => {
+    setNotes(notes.filter(note => note.id !== id));
+  };
 
   const stats = [
     {
@@ -248,6 +282,96 @@ export default function AdminDashboard() {
               </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Notes Section */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+            <Icon icon="mdi:note-text" className="w-5 h-5 text-blue-600" />
+            Notes
+          </h3>
+          <button
+            onClick={() => setIsAddingNote(!isAddingNote)}
+            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            <Icon icon="mdi:plus" className="w-4 h-4" />
+            Add Note
+          </button>
+        </div>
+
+        {/* Add Note Form */}
+        {isAddingNote && (
+          <div className="mb-6 p-4 border border-gray-200 rounded-lg bg-gray-50">
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                <input
+                  type="text"
+                  value={newNote.title}
+                  onChange={(e) => setNewNote({ ...newNote, title: e.target.value })}
+                  placeholder="Enter note title"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Content</label>
+                <textarea
+                  value={newNote.content}
+                  onChange={(e) => setNewNote({ ...newNote, content: e.target.value })}
+                  placeholder="Enter note content"
+                  rows={3}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-vertical"
+                />
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={handleAddNote}
+                  className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+                >
+                  Save Note
+                </button>
+                <button
+                  onClick={() => {
+                    setIsAddingNote(false);
+                    setNewNote({ title: '', content: '' });
+                  }}
+                  className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Notes List */}
+        <div className="space-y-4">
+          {notes.length === 0 ? (
+            <div className="text-center py-8 text-gray-500">
+              <Icon icon="mdi:note-off" className="w-12 h-12 mx-auto mb-2 text-gray-400" />
+              <p>No notes yet. Add your first note above!</p>
+            </div>
+          ) : (
+            notes.map((note) => (
+              <div key={note.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-sm transition-shadow">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <h4 className="font-semibold text-gray-900 mb-2">{note.title}</h4>
+                    <p className="text-gray-600 mb-2">{note.content}</p>
+                    <p className="text-sm text-gray-400">Created: {note.createdAt}</p>
+                  </div>
+                  <button
+                    onClick={() => handleDeleteNote(note.id)}
+                    className="ml-4 p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                  >
+                    <Icon icon="mdi:delete" className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
 

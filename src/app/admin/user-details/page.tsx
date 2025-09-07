@@ -1,11 +1,27 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Icon } from '@iconify/react';
 import Link from 'next/link';
 import BreadCrumbs from '@/components/admin/BreadCrumbs';
 
 export default function UserDetails() {
   const [activeTab, setActiveTab] = useState('favorites');
+  const [showContactOptions, setShowContactOptions] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setShowContactOptions(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   // Mock user data
   const user = {
@@ -21,6 +37,24 @@ export default function UserDetails() {
     location: 'New York, USA',
     bio: 'Experienced software developer with passion for creating innovative solutions.',
     skills: ['React', 'Node.js', 'TypeScript', 'Python', 'AWS']
+  };
+
+  const handleContactOption = (type: 'whatsapp' | 'telegram' | 'email') => {
+    const phoneNumber = user.phone.replace(/\D/g, ''); // Remove non-digits
+    const cleanPhone = phoneNumber.startsWith('1') ? phoneNumber : `1${phoneNumber}`;
+    
+    switch (type) {
+      case 'whatsapp':
+        window.open(`https://wa.me/${cleanPhone}`, '_blank');
+        break;
+      case 'telegram':
+        window.open(`https://t.me/${cleanPhone}`, '_blank');
+        break;
+      case 'email':
+        window.open(`mailto:${user.email}`, '_blank');
+        break;
+    }
+    setShowContactOptions(false);
   };
 
   // Mock data for tabs
@@ -106,9 +140,43 @@ export default function UserDetails() {
                  <Icon icon="fluent:mail-24-regular" className="w-5 h-5 text-gray-600" />
                  <span className="text-gray-700">{user.email}</span>
                </div>
-               <div className="flex items-center space-x-3">
+               <div className="flex items-center space-x-3 relative" ref={dropdownRef}>
                  <Icon icon="fluent:phone-24-regular" className="w-5 h-5 text-gray-600" />
-                 <span className="text-gray-700">{user.phone}</span>
+                 <button
+                   onClick={() => setShowContactOptions(!showContactOptions)}
+                   className="text-gray-700 hover:text-blue-600 transition-colors cursor-pointer"
+                 >
+                   {user.phone}
+                 </button>
+                 
+                 {/* Contact Options Dropdown */}
+                 {showContactOptions && (
+                   <div className="absolute top-8 left-0 bg-white border border-gray-200 rounded-lg shadow-lg z-10 min-w-[200px]">
+                     <div className="py-2">
+                       <button
+                         onClick={() => handleContactOption('whatsapp')}
+                         className="w-full flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-green-50 hover:text-green-600 transition-colors"
+                       >
+                         <Icon icon="mdi:whatsapp" className="w-4 h-4 mr-3 text-green-600" />
+                         Open in WhatsApp
+                       </button>
+                       <button
+                         onClick={() => handleContactOption('telegram')}
+                         className="w-full flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                       >
+                         <Icon icon="mdi:telegram" className="w-4 h-4 mr-3 text-blue-600" />
+                         Open in Telegram
+                       </button>
+                       <button
+                         onClick={() => handleContactOption('email')}
+                         className="w-full flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors"
+                       >
+                         <Icon icon="mdi:email" className="w-4 h-4 mr-3 text-red-600" />
+                         Send Email
+                       </button>
+                     </div>
+                   </div>
+                 )}
                </div>
                <div className="flex items-center space-x-3">
                  <Icon icon="fluent:calendar-24-regular" className="w-5 h-5 text-gray-600" />

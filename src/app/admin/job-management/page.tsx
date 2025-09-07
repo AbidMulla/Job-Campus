@@ -545,10 +545,10 @@ export default function JobManagement() {
           </div>
 
           {/* Add New Job Button */}
-          <button className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
+          <Link href="/admin/job-management/add-job" className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
             <Icon icon="fluent:add-24-regular" className="w-4 h-4" />
             Add New Job
-          </button>
+          </Link>
         </div>
       </div>
 
@@ -599,7 +599,6 @@ export default function JobManagement() {
                     <div className="text-sm font-medium text-gray-900 group-hover:text-blue-600">
                       {job.title}
                     </div>
-                    <div className="text-sm text-gray-500">{job.salary}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     <div className="flex items-center space-x-2">

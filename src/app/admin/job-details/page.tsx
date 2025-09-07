@@ -250,7 +250,7 @@ export default function JobDetails() {
         breadcrumbs={[
           { label: "Dashboard", href: "/admin/dashboard", icon: "fluent:grid-24-regular" },
           { label: "Job Management", href: "/admin/job-management", icon: "fluent:briefcase-24-regular" },
-          { label: job.title, icon: "fluent:document-24-regular" }
+          { label: "Job Details", icon: "fluent:document-24-regular" }
         ]} 
       />
 

@@ -10,6 +10,7 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   const handleMenuToggle = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -19,13 +20,21 @@ export default function AdminLayout({
     setIsMobileMenuOpen(false);
   };
 
-  return (
-    <div className="min-h-screen bg-gray-50 flex">
-      {/* Sidebar - Fixed on left side */}
-      <Sidebar isMobileMenuOpen={isMobileMenuOpen} onMenuClose={handleMenuClose} />
+  const handleSidebarToggle = (collapsed: boolean) => {
+    setIsSidebarCollapsed(collapsed);
+  };
 
-      {/* Main Content Area - Right side */}
-      <div className="flex-1 flex flex-col min-w-0">
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Sidebar - Fixed on left side */}
+      <Sidebar 
+        isMobileMenuOpen={isMobileMenuOpen} 
+        onMenuClose={handleMenuClose}
+        onCollapseToggle={handleSidebarToggle}
+      />
+
+      {/* Main Content Area - Right side with margin for fixed sidebar */}
+      <div className={`lg:${isSidebarCollapsed ? 'ml-16' : 'ml-64'} flex flex-col min-h-screen transition-all duration-300`}>
         {/* Header */}
         <Header onMenuToggle={handleMenuToggle} />
 

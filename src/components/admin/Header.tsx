@@ -107,9 +107,6 @@ export default function Header({ onMenuToggle }: HeaderProps) {
                     <Link href="/admin/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                       Profile Settings
                     </Link>
-                    <Link href="/admin/settings" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                      Account Settings
-                    </Link>
                     <hr className="my-1" />
                     <button className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                       Sign out

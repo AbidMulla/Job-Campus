@@ -169,37 +169,6 @@ export default function Batch() {
             <p className="text-gray-600 mt-2 text-sm sm:text-base">Find job opportunities specifically for your batch year.</p>
           </div>
 
-          {/* Search and Filters */}
-          <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200">
-            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
-              {/* Search */}
-              <div className="flex-1">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Search Jobs</label>
-                <input
-                  type="text"
-                  placeholder="Search by job title, company, or description..."
-                  value={searchTerm}
-                  onChange={handleSearchChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
-
-              {/* Year Filter */}
-              <div className="sm:w-48">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Batch Year</label>
-                <select
-                  value={selectedYear}
-                  onChange={handleYearChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                >
-                  {years.map(year => (
-                    <option key={year.id} value={year.id}>{year.name}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-          </div>
-
           {/* Job Cards Section */}
           <div className="bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-gray-200">
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 text-center mb-8">

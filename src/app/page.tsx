@@ -20,6 +20,27 @@ export default function Home() {
     setIsMobileMenuOpen(false);
   };
 
+  const handleShare = (platform: 'whatsapp' | 'telegram') => {
+    const url = window.location.href;
+    const title = 'FresherJobCampus - Latest Job Updates';
+    const text = 'Get latest job updates from FresherJobCampus!';
+    
+    if (platform === 'whatsapp') {
+      const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(`${text} ${title} - ${url}`)}`;
+      window.open(whatsappUrl, '_blank');
+    } else if (platform === 'telegram') {
+      const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(`${text} ${title}`)}`;
+      window.open(telegramUrl, '_blank');
+    }
+  };
+
+  const handleEmailNotification = () => {
+    const subject = 'FresherJobCampus - Job Updates Subscription';
+    const body = 'I would like to receive email notifications for new job opportunities from FresherJobCampus.';
+    const mailtoUrl = `mailto:careers@fresherjobcampus.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.open(mailtoUrl, '_blank');
+  };
+
   const jobTabs = [
     { id: 'all', label: 'Start All IT Job', icon: 'mdi:laptop' },
     { id: 'banking', label: 'Banking Job', icon: 'mdi:bank' },
@@ -115,8 +136,19 @@ export default function Home() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         <div className="space-y-8 sm:space-y-12">
           {/* Hero Section */}
-          <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 rounded-2xl p-6 sm:p-8 lg:p-12 text-white">
-            <div className="max-w-4xl mx-auto text-center">
+          <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 rounded-2xl p-6 sm:p-8 lg:p-12 text-white relative">
+            {/* Resume Link - Top Left */}
+            <div className="absolute top-4 left-4 sm:top-2 sm:left-2">
+              <Link
+                href="/resume"
+                className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-lg font-medium hover:bg-white/30 transition-all duration-300 border border-white/30 flex items-center gap-2 text-sm sm:text-base group"
+              >
+                <Icon icon="mdi:file-document" className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                <span>Do you want resume?</span>
+              </Link>
+            </div>
+            
+            <div className="max-w-4xl mx-auto text-center mt-3">
               {/* Quick Access Links */}
               <div className="grid grid-cols-2 gap-2 sm:hidden mb-6 sm:mb-8">
                 <Link
@@ -264,62 +296,50 @@ export default function Home() {
                   Consulting Job
                 </Link>
               </div>
-              
+
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6">
                 Welcome to Your FresherJobCampus
               </h1>
               <p className="text-lg sm:text-xl text-blue-100 mb-6 sm:mb-8 max-w-2xl mx-auto">
                 You will get all the latest jobs updates, career opportunities, and professional growth resources to kickstart your career journey.
               </p>
-              
-                             {/* Social Media Icons */}
-               <div className="flex justify-center space-x-4 mb-6 sm:mb-8">
-                 <button
-                   onClick={() => {
-                     const url = window.location.href;
-                     const title = 'FresherJobCampus - Latest Job Updates';
-                     const text = 'Get latest job updates from FresherJobCampus!';
-                     const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(`${text} ${title} - ${url}`)}`;
-                     window.open(whatsappUrl, '_blank');
-                   }}
-                   className="flex items-center space-x-2 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-md"
-                 >
-                   <Icon icon="mdi:whatsapp" className="w-5 h-5" />
-                   <span className="font-medium hidden sm:inline">Update on WhatsApp</span>
-                 </button>
-                 <button
-                   onClick={() => {
-                     const url = window.location.href;
-                     const title = 'FresherJobCampus - Latest Job Updates';
-                     const text = 'Get latest job updates from FresherJobCampus!';
-                     const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(`${text} ${title}`)}`;
-                     window.open(telegramUrl, '_blank');
-                   }}
-                   className="flex items-center space-x-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-md"
-                 >
-                   <Icon icon="mdi:telegram" className="w-5 h-5" />
-                   <span className="font-medium hidden sm:inline">Update on Telegram</span>
-                 </button>
+
+              {/* Social Media Icons Below Job Title */}
+              <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 mb-6 justify-center items-center">
+                {/* WhatsApp Button */}
                 <button
-                  onClick={() => {
-                    const subject = 'FresherJobCampus - Job Updates Subscription';
-                    const body = 'I would like to receive email notifications for new job opportunities from FresherJobCampus.';
-                    const mailtoUrl = `mailto:careers@fresherjobcampus.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-                    window.open(mailtoUrl, '_blank');
-                  }}
-                  className="flex items-center space-x-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-md"
+                  onClick={() => handleShare('whatsapp')}
+                  className="w-full sm:w-auto group bg-gradient-to-br from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-6 py-4 rounded-xl font-bold text-lg shadow-lg flex items-center justify-center gap-3 animate-heartbeat transform-gpu"
                 >
-                  <Icon icon="mdi:email" className="w-5 h-5" />
-                  <span className="font-medium hidden sm:inline">Get Email Updates</span>
+                  <Icon icon="mdi:whatsapp" className="w-6 h-6 sm:w-7 sm:h-7" />
+                  <span className="font-medium">Join on WhatsApp</span>
+                </button>
+
+                {/* Telegram Button */}
+                <button
+                  onClick={() => handleShare('telegram')}
+                  className="w-full sm:w-auto group bg-gradient-to-br from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white px-6 py-4 rounded-xl font-bold text-lg shadow-lg flex items-center justify-center gap-3 animate-heartbeat transform-gpu"
+                >
+                  <Icon icon="mdi:telegram" className="w-6 h-6 sm:w-7 sm:h-7" />
+                  <span className="font-medium">Join on Telegram</span>
+                </button>
+
+                {/* Email Button */}
+                <button
+                  onClick={handleEmailNotification}
+                  className="w-full sm:w-auto group bg-gradient-to-br from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 text-white px-6 py-4 rounded-xl font-bold text-lg shadow-lg flex items-center justify-center gap-3 animate-heartbeat transform-gpu"
+                >
+                  <Icon icon="mdi:email" className="w-6 h-6 sm:w-7 sm:h-7" />
+                  <span className="font-medium">Get Email Updates</span>
                 </button>
               </div>
-              
+
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link
                   href="/auth/login"
                   className="bg-white text-blue-600 px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors text-center"
                 >
-                Login
+                  Login
                 </Link>
                 <Link
                   href="/about"
@@ -331,29 +351,28 @@ export default function Home() {
             </div>
           </div>
 
-  
+
 
           {/* Job Cards Section with Tabs */}
           <div className="bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-gray-200">
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 text-center mb-8">Latest Job Opportunities</h2>
-            
+
             {/* Job Category Tabs */}
             <div className="flex flex-wrap justify-center gap-2 mb-8">
               {jobTabs.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
-                    activeTab === tab.id
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-300 ${activeTab === tab.id
                       ? 'bg-blue-600 text-white shadow-lg'
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
+                    }`}
                 >
                   <Icon icon={tab.icon} className="w-4 h-4" />
                   <span className="text-sm sm:text-base">{tab.label}</span>
                 </button>
               ))}
-          </div>
+            </div>
 
             {/* Job Cards Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -388,7 +407,7 @@ export default function Home() {
                 <div className="text-3xl sm:text-4xl font-bold text-purple-600 mb-2">50K+</div>
                 <div className="text-gray-600 text-sm sm:text-base">Certificates Issued</div>
               </div>
-      <div className="text-center">
+              <div className="text-center">
                 <div className="text-3xl sm:text-4xl font-bold text-yellow-600 mb-2">98%</div>
                 <div className="text-gray-600 text-sm sm:text-base">Satisfaction Rate</div>
               </div>
@@ -408,7 +427,7 @@ export default function Home() {
             <p className="text-lg sm:text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
               Stay ahead of the competition with instant job notifications and updates
             </p>
-            
+
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
               {/* Email Button */}
               <button
@@ -469,7 +488,7 @@ export default function Home() {
           </div>
         </div>
       </div>
-      
+
       {/* Footer */}
       <Footer />
     </div>

@@ -4,311 +4,264 @@ import { Icon } from '@iconify/react';
 import BreadCrumbs from '@/components/admin/BreadCrumbs';
 
 export default function WhatsAppBlast() {
-  const [whatsappData, setWhatsappData] = useState({
-    message: '',
-    recipientType: 'all', // all, active, inactive, specific
-    recipientCount: 0,
-    scheduledDate: '',
-    isScheduled: false,
-    includeMedia: false,
-    mediaType: 'image' // image, document, video
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterStatus, setFilterStatus] = useState('all');
+  const [filterCategory, setFilterCategory] = useState('all');
+
+  const whatsappData = [
+    {
+      id: 1,
+      name: 'Job Alert Template',
+      description: 'For new job notifications',
+      content: 'Hi {{name}}, we have a new job opportunity for you: {{jobTitle}} at {{company}}. Apply now!',
+      category: 'Job Alerts',
+      status: 'approved',
+      lastUsed: '2024-01-15',
+      recipients: 743,
+      readRate: 86.7,
+      replyRate: 34.5
+    },
+    {
+      id: 2,
+      name: 'Interview Reminder',
+      description: 'Upcoming interview notifications',
+      content: 'Hi {{name}}, this is a reminder about your interview for {{position}} at {{company}} on {{date}} at {{time}}.',
+      category: 'Interview',
+      status: 'approved',
+      lastUsed: '2024-01-14',
+      recipients: 156,
+      readRate: 92.3,
+      replyRate: 28.2
+    },
+    {
+      id: 3,
+      name: 'Welcome Message',
+      description: 'New user onboarding',
+      content: 'Welcome to Freshers, {{name}}! We\'re excited to help you find your dream job. Get started by completing your profile.',
+      category: 'Onboarding',
+      status: 'approved',
+      lastUsed: '2024-01-13',
+      recipients: 89,
+      readRate: 78.7,
+      replyRate: 45.1
+    },
+    {
+      id: 4,
+      name: 'Follow-up Template',
+      description: 'Post-application follow-up',
+      content: 'Hi {{name}}, thank you for applying to {{position}}. We\'ll review your application and get back to you soon.',
+      category: 'Follow-up',
+      status: 'pending',
+      lastUsed: '2024-01-12',
+      recipients: 234,
+      readRate: 89.3,
+      replyRate: 12.8
+    },
+    {
+      id: 5,
+      name: 'Event Invitation',
+      description: 'Career events and webinars',
+      content: 'Hi {{name}}, join us for our upcoming career webinar on {{topic}} on {{date}}. Register now!',
+      category: 'Events',
+      status: 'approved',
+      lastUsed: '2024-01-11',
+      recipients: 567,
+      readRate: 84.1,
+      replyRate: 22.4
+    },
+    {
+      id: 6,
+      name: 'Application Status',
+      description: 'Application status updates',
+      content: 'Hi {{name}}, your application for {{position}} has been {{status}}. We\'ll contact you with next steps.',
+      category: 'Status Updates',
+      status: 'approved',
+      lastUsed: '2024-01-10',
+      recipients: 45,
+      readRate: 91.7,
+      replyRate: 15.6
+    }
+  ];
+
+  const getStatusBadge = (status: string) => {
+    const statusConfig = {
+      approved: { color: 'bg-green-100 text-green-800', label: 'Approved' },
+      pending: { color: 'bg-yellow-100 text-yellow-800', label: 'Pending' },
+      rejected: { color: 'bg-red-100 text-red-800', label: 'Rejected' }
+    };
+    
+    const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.pending;
+    return (
+      <span className={`px-2 py-1 rounded-full text-xs font-medium ${config.color}`}>
+        {config.label}
+      </span>
+    );
+  };
+
+  const filteredData = whatsappData.filter(item => {
+    const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         item.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         item.content.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = filterStatus === 'all' || item.status === filterStatus;
+    const matchesCategory = filterCategory === 'all' || item.category === filterCategory;
+    
+    return matchesSearch && matchesStatus && matchesCategory;
   });
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [showPreview, setShowPreview] = useState(false);
-
-  // Mock recipient counts
-  const recipientCounts = {
-    all: 856,
-    active: 743,
-    inactive: 113,
-    specific: 0
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value, type } = e.target;
-    setWhatsappData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value,
-      recipientCount: recipientCounts[value as keyof typeof recipientCounts] || 0
-    }));
-  };
-
-  const handleSendWhatsApp = async () => {
-    setIsLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      alert('WhatsApp blast sent successfully!');
-    }, 2000);
-  };
-
-  const handlePreview = () => {
-    setShowPreview(!showPreview);
-  };
-
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Breadcrumbs */}
-        <BreadCrumbs 
-          title="WhatsApp Blast"
-          breadcrumbs={[
-            { label: 'Dashboard', href: '/admin/dashboard' },
-            { label: 'WhatsApp Blast', href: '/admin/whatsapp-blast' }
-          ]} 
-        />
+    <div className="space-y-2">
+      {/* BreadCrumbs */}
+      <BreadCrumbs 
+        title="WhatsApp Blast" 
+        breadcrumbs={[
+          { label: "Dashboard", href: "/admin/dashboard", icon: "fluent:grid-24-regular" },
+          { label: "WhatsApp Blast", icon: "fluent:chat-24-regular" }
+        ]} 
+      />
 
-        {/* Description */}
-        <div className="mb-8">
-          <p className="text-gray-600">Send bulk WhatsApp messages to your users</p>
+      {/* Filters */}
+      <div className="bg-white p-4 rounded-lg border border-gray-200">
+        <div className="flex flex-wrap items-center gap-4">
+          {/* Search */}
+          <div className="relative flex-1 min-w-64">
+            <Icon icon="fluent:search-24-regular" className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <input
+              type="text"
+              placeholder="Search by name, description, or content..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-9 pr-3 py-2 text-sm text-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 placeholder-gray-500"
+            />
+          </div>
+
+          {/* Status Filter */}
+          <div className="relative">
+            <select
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+              className="w-40 pl-3 pr-8 py-2 text-sm text-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 appearance-none cursor-pointer"
+            >
+              <option value="all">All Status</option>
+              <option value="approved">Approved</option>
+              <option value="pending">Pending</option>
+              <option value="rejected">Rejected</option>
+            </select>
+            <Icon icon="fluent:chevron-down-24-regular" className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
+          </div>
+
+          {/* Category Filter */}
+          <div className="relative">
+            <select
+              value={filterCategory}
+              onChange={(e) => setFilterCategory(e.target.value)}
+              className="w-40 pl-3 pr-8 py-2 text-sm text-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 appearance-none cursor-pointer"
+            >
+              <option value="all">All Categories</option>
+              <option value="Job Alerts">Job Alerts</option>
+              <option value="Interview">Interview</option>
+              <option value="Onboarding">Onboarding</option>
+              <option value="Follow-up">Follow-up</option>
+              <option value="Events">Events</option>
+              <option value="Status Updates">Status Updates</option>
+            </select>
+            <Icon icon="fluent:chevron-down-24-regular" className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
+          </div>
+
+          {/* Add New Button */}
+          <button className="flex items-center px-4 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors">
+            <Icon icon="fluent:add-24-regular" className="w-5 h-5 mr-2" />
+            Add New
+          </button>
         </div>
+      </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* WhatsApp Form */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-6">Compose WhatsApp Message</h2>
-              
-              <div className="space-y-6">
-                {/* Message */}
-                <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
-                    Message
-                  </label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    value={whatsappData.message}
-                    onChange={handleInputChange}
-                    rows={6}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                    placeholder="Enter your WhatsApp message..."
-                  />
-                  <p className="mt-1 text-sm text-gray-500">Maximum 4096 characters</p>
-                </div>
-
-                {/* Recipients */}
-                <div>
-                  <label htmlFor="recipientType" className="block text-sm font-medium text-gray-700 mb-2">
-                    Recipients
-                  </label>
-                  <select
-                    id="recipientType"
-                    name="recipientType"
-                    value={whatsappData.recipientType}
-                    onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                  >
-                    <option value="all">All Users ({recipientCounts.all})</option>
-                    <option value="active">Active Users ({recipientCounts.active})</option>
-                    <option value="inactive">Inactive Users ({recipientCounts.inactive})</option>
-                    <option value="specific">Specific Users</option>
-                  </select>
-                </div>
-
-                {/* Media Options */}
-                <div>
-                  <div className="flex items-center mb-3">
-                    <input
-                      type="checkbox"
-                      id="includeMedia"
-                      name="includeMedia"
-                      checked={whatsappData.includeMedia}
-                      onChange={handleInputChange}
-                      className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
-                    />
-                    <label htmlFor="includeMedia" className="ml-2 text-sm font-medium text-gray-700">
-                      Include Media
-                    </label>
-                  </div>
-                  
-                  {whatsappData.includeMedia && (
-                    <div className="ml-6 space-y-3">
-                      <select
-                        name="mediaType"
-                        value={whatsappData.mediaType}
-                        onChange={handleInputChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                      >
-                        <option value="image">Image</option>
-                        <option value="document">Document</option>
-                        <option value="video">Video</option>
-                      </select>
-                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
-                        <Icon icon="fluent:cloud-upload-24-regular" className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                        <p className="text-sm text-gray-600">Click to upload or drag and drop</p>
-                        <p className="text-xs text-gray-500 mt-1">PNG, JPG, PDF, MP4 up to 10MB</p>
-                      </div>
+      {/* Table */}
+      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Name
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Category
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Status
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Recipients
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Read Rate
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Reply Rate
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Last Used
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {filteredData.map((item) => (
+                <tr key={item.id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4">
+                    <div>
+                      <div className="text-sm font-medium text-gray-900">{item.name}</div>
+                      <div className="text-sm text-gray-500">{item.description}</div>
                     </div>
-                  )}
-                </div>
-
-                {/* Schedule */}
-                <div>
-                  <div className="flex items-center mb-3">
-                    <input
-                      type="checkbox"
-                      id="isScheduled"
-                      name="isScheduled"
-                      checked={whatsappData.isScheduled}
-                      onChange={handleInputChange}
-                      className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
-                    />
-                    <label htmlFor="isScheduled" className="ml-2 text-sm font-medium text-gray-700">
-                      Schedule Message
-                    </label>
-                  </div>
-                  
-                  {whatsappData.isScheduled && (
-                    <input
-                      type="datetime-local"
-                      name="scheduledDate"
-                      value={whatsappData.scheduledDate}
-                      onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                    />
-                  )}
-                </div>
-
-                {/* Action Buttons */}
-                <div className="flex space-x-4">
-                  <button
-                    onClick={handleSendWhatsApp}
-                    disabled={isLoading || !whatsappData.message}
-                    className="flex items-center px-6 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                  >
-                    {isLoading ? (
-                      <>
-                        <Icon icon="eos-icons:loading" className="w-5 h-5 mr-2" />
-                        Sending...
-                      </>
-                    ) : (
-                      <>
-                        <Icon icon="fluent:send-24-regular" className="w-5 h-5 mr-2" />
-                        Send WhatsApp Blast
-                      </>
-                    )}
-                  </button>
-                  
-                  <button
-                    onClick={handlePreview}
-                    className="flex items-center px-6 py-3 bg-gray-600 text-white font-medium rounded-lg hover:bg-gray-700 transition-colors"
-                  >
-                    <Icon icon="fluent:eye-24-regular" className="w-5 h-5 mr-2" />
-                    Preview
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Preview */}
-            {showPreview && (
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">WhatsApp Message Preview</h3>
-                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                  <div className="flex items-start space-x-3">
-                    <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
-                      <Icon icon="fluent:chat-24-regular" className="w-5 h-5 text-white" />
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className="inline-block px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded-full">
+                      {item.category}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {getStatusBadge(item.status)}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <div className="flex items-center">
+                      <Icon icon="fluent:people-24-regular" className="w-4 h-4 text-gray-400 mr-2" />
+                      {item.recipients.toLocaleString()}
                     </div>
-                    <div className="flex-1">
-                      <div className="bg-white rounded-lg p-3 shadow-sm">
-                        <p className="text-gray-900 whitespace-pre-wrap">
-                          {whatsappData.message || 'No message content'}
-                        </p>
-                      </div>
-                      <p className="text-xs text-gray-500 mt-1">WhatsApp Business</p>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <div className="flex items-center">
+                      <span className="text-blue-600 font-medium">{item.readRate}%</span>
+                      <Icon icon="fluent:eye-24-regular" className="w-4 h-4 text-gray-400 ml-1" />
                     </div>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Stats */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">WhatsApp Statistics</h3>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-600">Total Recipients</span>
-                  <span className="font-semibold text-green-600">{whatsappData.recipientCount}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-600">Delivery Rate</span>
-                  <span className="font-semibold text-green-600">99.2%</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-600">Read Rate</span>
-                  <span className="font-semibold text-blue-600">86.7%</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-600">Reply Rate</span>
-                  <span className="font-semibold text-purple-600">34.5%</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Recent Campaigns */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Campaigns</h3>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <div>
-                    <p className="font-medium text-gray-900">Job Alert - Remote Jobs</p>
-                    <p className="text-sm text-gray-600">Sent 1 hour ago</p>
-                  </div>
-                  <span className="text-sm text-green-600 font-medium">743 sent</span>
-                </div>
-                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <div>
-                    <p className="font-medium text-gray-900">Interview Reminder</p>
-                    <p className="text-sm text-gray-600">Sent 4 hours ago</p>
-                  </div>
-                  <span className="text-sm text-green-600 font-medium">156 sent</span>
-                </div>
-                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <div>
-                    <p className="font-medium text-gray-900">Welcome Message</p>
-                    <p className="text-sm text-gray-600">Sent 1 day ago</p>
-                  </div>
-                  <span className="text-sm text-green-600 font-medium">89 sent</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Message Templates */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Message Templates</h3>
-              <div className="space-y-3">
-                <button className="w-full text-left p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                  <p className="font-medium text-gray-900">Job Alert Template</p>
-                  <p className="text-sm text-gray-600">New job notifications</p>
-                </button>
-                <button className="w-full text-left p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                  <p className="font-medium text-gray-900">Interview Reminder</p>
-                  <p className="text-sm text-gray-600">Upcoming interviews</p>
-                </button>
-                <button className="w-full text-left p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                  <p className="font-medium text-gray-900">Welcome Message</p>
-                  <p className="text-sm text-gray-600">New user onboarding</p>
-                </button>
-              </div>
-            </div>
-
-            {/* WhatsApp Guidelines */}
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-              <h4 className="font-medium text-yellow-800 mb-2">WhatsApp Guidelines</h4>
-              <ul className="text-sm text-yellow-700 space-y-1">
-                <li>• Messages must be under 4096 characters</li>
-                <li>• Avoid spam-like content</li>
-                <li>• Include opt-out instructions</li>
-                <li>• Respect business hours (9 AM - 6 PM)</li>
-              </ul>
-            </div>
-          </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <div className="flex items-center">
+                      <span className="text-purple-600 font-medium">{item.replyRate}%</span>
+                      <Icon icon="fluent:chat-24-regular" className="w-4 h-4 text-gray-400 ml-1" />
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {item.lastUsed}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <div className="flex space-x-2">
+                      <button className="p-1 border border-gray-300 rounded-md text-blue-600 hover:text-blue-900 hover:bg-blue-50 hover:border-blue-400 transition-colors">
+                        <Icon icon="fluent:eye-24-regular" className="w-4 h-4" />
+                      </button>
+                      <button className="p-1 border border-gray-300 rounded-md text-green-600 hover:text-green-900 hover:bg-green-50 hover:border-green-400 transition-colors">
+                        <Icon icon="fluent:edit-24-regular" className="w-4 h-4" />
+                      </button>
+                      <button className="p-1 border border-gray-300 rounded-md text-red-600 hover:text-red-900 hover:bg-red-50 hover:border-red-400 transition-colors">
+                        <Icon icon="fluent:delete-24-regular" className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

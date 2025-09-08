@@ -89,27 +89,27 @@ export default function Header({ onMenuToggle }: HeaderProps) {
       )
     },
     {
-      name: 'INTERNSHIP',
-      href: '/user/internship',
-      isActive: pathname === '/user/internship',
+      name: 'WALK-IN',
+      href: '/user/walkin-interview',
+      isActive: pathname === '/user/walkin-interview',
       hasDropdown: false,
       icon: (
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6a2 2 0 01-2 2H8a2 2 0 01-2-2V8a2 2 0 012-2V6" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
         </svg>
       )
     },
-          {
-        name: 'POST JOB',
-        href: '/user/contact',
-        isActive: pathname === '/user/contact',
-        hasDropdown: false,
-        icon: (
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-          </svg>
-        )
-      }
+    {
+      name: 'POST JOB',
+      href: '/user/contact',
+      isActive: pathname === '/user/contact',
+      hasDropdown: false,
+      icon: (
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+        </svg>
+      )
+    }
   ];
 
   const handleDropdownToggle = (itemName: string) => {

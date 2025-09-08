@@ -50,6 +50,60 @@ body {
   will-change: transform;
 }
 
+/* Scrolling Text Animation */
+@keyframes scroll-text {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-scroll-text {
+  animation: scroll-text 30s linear infinite;
+}
+
+.animate-scroll-text:hover {
+  animation-play-state: paused;
+}
+
+/* Moving Logos Animation */
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-scroll {
+  animation: scroll 30s linear infinite;
+}
+
+.animate-scroll:hover {
+  animation-play-state: paused;
+}
+
+/* Similar Jobs Slider Animation */
+@keyframes scroll-similar {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-scroll-similar {
+  animation: scroll-similar 40s linear infinite;
+}
+
+.animate-scroll-similar:hover {
+  animation-play-state: paused;
+}
+
 /* Form element visibility improvements */
 input::placeholder,
 textarea::placeholder {

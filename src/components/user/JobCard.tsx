@@ -8,7 +8,7 @@ interface JobCardProps {
   company: string;
   description: string;
   imageUrl: string;
-  type?: 'Full-time' | 'Part-time' | 'Contract' | 'Internship';
+  type?: 'Full-time' | 'Part-time' | 'Contract' | 'Internship' | 'Work from Home';
   isUrgent?: boolean;
 }
 

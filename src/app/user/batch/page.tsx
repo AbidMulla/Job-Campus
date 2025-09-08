@@ -1,10 +1,12 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { Icon } from '@iconify/react';
 import JobCard from '@/components/user/JobCard';
 
 export default function Batch() {
   const [selectedYear, setSelectedYear] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [currentSlide, setCurrentSlide] = useState(0);
 
   const years = [
     { id: 'all', name: 'All Years' },
@@ -140,6 +142,17 @@ export default function Batch() {
     console.log('Filtered Jobs Count:', filteredJobs.length);
   }, [selectedYear, searchTerm, filteredJobs.length]);
 
+  // Handle window resize for responsive behavior
+  useEffect(() => {
+    const handleResize = () => {
+      // Reset to first slide when screen size changes
+      setCurrentSlide(0);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   // Get dynamic title based on selected year
   const getDynamicTitle = () => {
     if (selectedYear === 'all') {
@@ -159,6 +172,27 @@ export default function Batch() {
     setSearchTerm(e.target.value);
   };
 
+  const getCardsPerView = () => {
+    if (typeof window !== 'undefined') {
+      if (window.innerWidth < 768) return 1; // Mobile: 1 card
+      if (window.innerWidth < 1024) return 2; // Tablet: 2 cards
+      return 3; // Desktop: 3 cards
+    }
+    return 3; // Default to 3 cards
+  };
+
+  const nextSlide = () => {
+    const cardsPerView = getCardsPerView();
+    const maxSlides = Math.max(0, batchJobs.length - cardsPerView);
+    setCurrentSlide((prev) => (prev + 1) % (maxSlides + 1));
+  };
+
+  const prevSlide = () => {
+    const cardsPerView = getCardsPerView();
+    const maxSlides = Math.max(0, batchJobs.length - cardsPerView);
+    setCurrentSlide((prev) => (prev - 1 + (maxSlides + 1)) % (maxSlides + 1));
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
@@ -167,6 +201,83 @@ export default function Batch() {
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{getDynamicTitle()}</h1>
             <p className="text-gray-600 mt-2 text-sm sm:text-base">Find job opportunities specifically for your batch year.</p>
+          </div>
+
+          {/* Filters and Search */}
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+            <div className="flex flex-wrap items-center gap-3">
+              {/* Job Search */}
+              <div className="relative w-48">
+                <Icon icon="fluent:briefcase-24-regular" className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <input
+                  type="text"
+                  placeholder="Search by job..."
+                  value={searchTerm}
+                  onChange={handleSearchChange}
+                  className="w-full pl-9 pr-3 py-2 text-sm text-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-500"
+                />
+              </div>
+
+              {/* Batch Year Filter */}
+              <div className="relative">
+                <select
+                  value={selectedYear}
+                  onChange={handleYearChange}
+                  className="w-40 pl-3 pr-8 py-2 text-sm text-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none cursor-pointer"
+                >
+                  {years.map((year) => (
+                    <option key={year.id} value={year.id}>
+                      {year.name}
+                    </option>
+                  ))}
+                </select>
+                <Icon icon="fluent:chevron-down-24-regular" className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
+              </div>
+
+              {/* Job Type Filter */}
+              <div className="relative">
+                <select
+                  className="w-40 pl-3 pr-8 py-2 text-sm text-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none cursor-pointer"
+                >
+                  <option value="all">All Job Types</option>
+                  <option value="Full-time">Full-time</option>
+                  <option value="Part-time">Part-time</option>
+                  <option value="Contract">Contract</option>
+                  <option value="Internship">Internship</option>
+                </select>
+                <Icon icon="fluent:chevron-down-24-regular" className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
+              </div>
+
+              {/* Company Filter */}
+              <div className="relative">
+                <select
+                  className="w-40 pl-3 pr-8 py-2 text-sm text-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none cursor-pointer"
+                >
+                  <option value="all">All Companies</option>
+                  <option value="TCS">TCS</option>
+                  <option value="Infosys">Infosys</option>
+                  <option value="Wipro">Wipro</option>
+                  <option value="HCL">HCL</option>
+                  <option value="Tech Mahindra">Tech Mahindra</option>
+                  <option value="Cognizant">Cognizant</option>
+                  <option value="Accenture">Accenture</option>
+                  <option value="Capgemini">Capgemini</option>
+                </select>
+                <Icon icon="fluent:chevron-down-24-regular" className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
+              </div>
+
+              {/* Urgency Filter */}
+              <div className="relative">
+                <select
+                  className="w-32 pl-3 pr-8 py-2 text-sm text-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none cursor-pointer"
+                >
+                  <option value="all">All Status</option>
+                  <option value="urgent">Urgent</option>
+                  <option value="normal">Normal</option>
+                </select>
+                <Icon icon="fluent:chevron-down-24-regular" className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
+              </div>
+            </div>
           </div>
 
           {/* Job Cards Section */}
@@ -199,6 +310,90 @@ export default function Batch() {
                 <p className="text-gray-600">Try adjusting your search or filter criteria.</p>
               </div>
             )}
+          </div>
+
+          {/* Similar Jobs Section */}
+          <div className="bg-white p-6 sm:p-8 rounded-xl  border-gray-200">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 text-left mb-8">Similar Jobs You Might Like</h2>
+            
+            {/* Similar Jobs Slider */}
+            <div className="relative">
+              {/* Navigation Arrows */}
+              <button
+                onClick={prevSlide}
+                className="absolute left-0 top-1/2 transform -translate-y-1/2 z-20 bg-white shadow-lg rounded-full p-3 hover:bg-gray-50 transition-colors border border-gray-200"
+              >
+                <Icon icon="fluent:chevron-left-24-regular" className="w-6 h-6 text-gray-600" />
+              </button>
+              
+              <button
+                onClick={nextSlide}
+                className="absolute right-0 top-1/2 transform -translate-y-1/2 z-20 bg-white shadow-lg rounded-full p-3 hover:bg-gray-50 transition-colors border border-gray-200"
+              >
+                <Icon icon="fluent:chevron-right-24-regular" className="w-6 h-6 text-gray-600" />
+              </button>
+
+              {/* Similar Jobs Container */}
+              <div className="overflow-hidden px-4 sm:px-8 lg:px-12">
+                <div 
+                  className="flex transition-transform duration-500 ease-in-out"
+                  style={{ 
+                    transform: `translateX(-${currentSlide * (100 / getCardsPerView())}%)` 
+                  }}
+                >
+                  {batchJobs.map((job) => (
+                    <div key={job.id} className="w-full sm:w-1/2 lg:w-1/3 flex-shrink-0 px-2 sm:px-3">
+                      <div className="bg-gray-50 rounded-xl p-4 sm:p-6 hover:shadow-lg transition-all duration-300 border border-gray-100 h-full">
+                        {/* Company Logo */}
+                        <div className="flex items-center mb-3 sm:mb-4">
+                          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-2 sm:mr-3">
+                            <Icon icon="fluent:building-24-regular" className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h3 className="font-semibold text-gray-900 text-xs sm:text-sm truncate">{job.company}</h3>
+                            <p className="text-xs text-gray-500 truncate">{job.type}</p>
+                          </div>
+                          {job.isUrgent && (
+                            <span className="ml-2 bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full font-medium flex-shrink-0">
+                              Urgent
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Job Title */}
+                        <h4 className="font-bold text-gray-900 mb-2 text-sm sm:text-base line-clamp-2">
+                          {job.title}
+                        </h4>
+
+                        {/* Job Description */}
+                        <p className="text-gray-600 text-xs sm:text-sm mb-3 sm:mb-4 line-clamp-3">
+                          {job.description}
+                        </p>
+
+                        {/* Action Button */}
+                        <button className="w-full bg-blue-600 text-white py-2 px-3 sm:px-4 rounded-lg font-medium hover:bg-blue-700 transition-colors text-xs sm:text-sm">
+                          View Details
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Slide Indicators */}
+            <div className="flex justify-center mt-4 sm:mt-6 space-x-1 sm:space-x-2">
+              {Array.from({ length: Math.max(0, batchJobs.length - getCardsPerView()) + 1 }, (_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentSlide(index)}
+                  className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full transition-colors ${
+                    currentSlide === index ? 'bg-blue-600' : 'bg-gray-300'
+                  }`}
+                />
+              ))}
+            </div>
+
           </div>
         </div>
       </div>

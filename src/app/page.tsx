@@ -1,12 +1,69 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { Icon } from '@iconify/react';
 import Header from '@/components/user/Header';
 import Sidebar from '@/components/user/Sidebar';
 import JobCard from '@/components/user/JobCard';
+import ScrollingText from '@/components/user/ScrollingText';
+import MovingLogos from '@/components/user/MovingLogos';
 import CustomerReview from '@/components/user/CustomerReview';
 import Footer from '@/components/user/Footer';
+
+// Adsterra Banner Component
+function AdsterraBanner() {
+  const banner = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (banner.current) {
+      banner.current.innerHTML = "";
+    }
+
+    // Default desktop banner
+    let atOptions = {
+      key: "49c501ac723291f0b3e32b6bba490d74",
+      format: "iframe",
+      height: 90,
+      width: 728,
+      params: {},
+    };
+
+    // Adjust banner size based on screen width
+    if (window.innerWidth < 768) {
+      // Mobile
+      atOptions = {
+        key: "49c501ac723291f0b3e32b6bba490d74",
+        format: "iframe",
+        height: 50,
+        width: 320,
+        params: {},
+      };
+    }
+
+    (window as any).atOptions = atOptions;
+
+    const script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src =
+      "//www.highperformanceformat.com/49c501ac723291f0b3e32b6bba490d74/invoke.js";
+
+    if (banner.current) {
+      banner.current.appendChild(script);
+    }
+
+    return () => {
+      if (banner.current) {
+        banner.current.innerHTML = "";
+      }
+    };
+  }, []);
+
+  return (
+    <div className="flex justify-center items-center w-full overflow-x-auto">
+      <div ref={banner} className="max-w-full"></div>
+    </div>
+  );
+}
 
 export default function Home() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -45,13 +102,11 @@ export default function Home() {
     { id: 'all', label: 'Start All IT Job', icon: 'mdi:laptop' },
     { id: 'banking', label: 'Banking Job', icon: 'mdi:bank' },
     { id: 'healthcare', label: 'Healthcare Job', icon: 'mdi:medical-bag' },
-    { id: 'manufacturing', label: 'Manufacturing Job', icon: 'mdi:factory' },
-    { id: 'education', label: 'Education Job', icon: 'mdi:school' },
-    { id: 'retail', label: 'Retail Job', icon: 'mdi:shopping' },
     { id: 'marketing', label: 'Marketing Job', icon: 'mdi:bullhorn' },
     { id: 'design', label: 'Design Job', icon: 'mdi:palette' },
     { id: 'engineering', label: 'Engineering Job', icon: 'mdi:cog' },
-    { id: 'consulting', label: 'Consulting Job', icon: 'mdi:account-group' }
+    { id: 'consulting', label: 'Consulting Job', icon: 'mdi:account-group' },
+    { id: 'workfromhome', label: 'Work from Home', icon: 'mdi:home' }
   ];
 
   // Job data for each category
@@ -76,24 +131,6 @@ export default function Home() {
       { id: "health-3", title: "Clinical Research Coordinator", company: "ResearchMed", description: "Coordinate clinical trials and research studies in healthcare settings.", imageUrl: "/next.svg", type: "Full-time" as const },
       { id: "health-4", title: "Healthcare Administrator", company: "HealthAdmin", description: "Manage healthcare facility operations and administrative processes.", imageUrl: "/next.svg", type: "Full-time" as const }
     ],
-    manufacturing: [
-      { id: "mfg-1", title: "Production Engineer", company: "ManufactureCorp", description: "Optimize manufacturing processes and improve production efficiency.", imageUrl: "/next.svg", type: "Full-time" as const, isUrgent: true },
-      { id: "mfg-2", title: "Quality Control Specialist", company: "QualityMfg", description: "Ensure product quality through testing and quality control procedures.", imageUrl: "/next.svg", type: "Full-time" as const },
-      { id: "mfg-3", title: "Supply Chain Analyst", company: "SupplyChain", description: "Analyze and optimize supply chain operations and logistics.", imageUrl: "/next.svg", type: "Full-time" as const },
-      { id: "mfg-4", title: "Industrial Designer", company: "DesignMfg", description: "Design innovative manufacturing processes and industrial products.", imageUrl: "/next.svg", type: "Full-time" as const }
-    ],
-    education: [
-      { id: "edu-1", title: "Educational Technology Specialist", company: "EduTech", description: "Implement and support educational technology solutions in learning environments.", imageUrl: "/next.svg", type: "Full-time" as const, isUrgent: true },
-      { id: "edu-2", title: "Curriculum Developer", company: "CurriculumCorp", description: "Develop engaging and effective educational curricula for various subjects.", imageUrl: "/next.svg", type: "Full-time" as const },
-      { id: "edu-3", title: "Online Learning Coordinator", company: "OnlineEdu", description: "Coordinate and manage online learning programs and virtual classrooms.", imageUrl: "/next.svg", type: "Full-time" as const },
-      { id: "edu-4", title: "Educational Content Creator", company: "ContentEdu", description: "Create engaging educational content for digital learning platforms.", imageUrl: "/next.svg", type: "Full-time" as const }
-    ],
-    retail: [
-      { id: "retail-1", title: "Retail Analytics Manager", company: "RetailAnalytics", description: "Analyze retail data to optimize store performance and customer experience.", imageUrl: "/next.svg", type: "Full-time" as const, isUrgent: true },
-      { id: "retail-2", title: "E-commerce Specialist", company: "EcommerceRetail", description: "Manage online retail operations and digital customer experience.", imageUrl: "/next.svg", type: "Full-time" as const },
-      { id: "retail-3", title: "Inventory Manager", company: "InventoryRetail", description: "Optimize inventory levels and manage supply chain for retail operations.", imageUrl: "/next.svg", type: "Full-time" as const },
-      { id: "retail-4", title: "Customer Experience Manager", company: "CXRetail", description: "Enhance customer experience and satisfaction in retail environments.", imageUrl: "/next.svg", type: "Full-time" as const }
-    ],
     marketing: [
       { id: "mkt-1", title: "Digital Marketing Manager", company: "DigitalMkt", description: "Lead digital marketing campaigns and strategies across multiple channels.", imageUrl: "/next.svg", type: "Full-time" as const, isUrgent: true },
       { id: "mkt-2", title: "SEO Specialist", company: "SEOSpecialist", description: "Optimize website content and improve search engine rankings.", imageUrl: "/next.svg", type: "Full-time" as const },
@@ -117,6 +154,14 @@ export default function Home() {
       { id: "consult-2", title: "IT Consultant", company: "ITConsulting", description: "Advise on technology strategy and digital transformation.", imageUrl: "/next.svg", type: "Full-time" as const },
       { id: "consult-3", title: "Management Consultant", company: "ManagementConsult", description: "Help organizations improve performance and efficiency.", imageUrl: "/next.svg", type: "Full-time" as const },
       { id: "consult-4", title: "Strategy Consultant", company: "StrategyConsult", description: "Develop strategic plans and business strategies.", imageUrl: "/next.svg", type: "Full-time" as const }
+    ],
+    workfromhome: [
+      { id: "wfh-1", title: "Remote Software Developer", company: "RemoteTech", description: "Work from home as a software developer. Build applications using modern technologies and collaborate with distributed teams.", imageUrl: "/next.svg", type: "Work from Home" as const, isUrgent: true },
+      { id: "wfh-2", title: "Virtual Customer Support", company: "SupportRemote", description: "Provide customer support from the comfort of your home. Handle inquiries and resolve issues through phone, email, and chat.", imageUrl: "/next.svg", type: "Work from Home" as const },
+      { id: "wfh-3", title: "Online Content Writer", company: "ContentRemote", description: "Create engaging content for websites, blogs, and social media. Work flexible hours from anywhere with internet connection.", imageUrl: "/next.svg", type: "Work from Home" as const },
+      { id: "wfh-4", title: "Remote Data Entry Specialist", company: "DataRemote", description: "Handle data entry tasks remotely. Input and maintain accurate records in various databases and systems.", imageUrl: "/next.svg", type: "Work from Home" as const },
+      { id: "wfh-5", title: "Virtual Assistant", company: "VirtualAssist", description: "Provide administrative support to businesses remotely. Manage schedules, emails, and various administrative tasks.", imageUrl: "/next.svg", type: "Work from Home" as const },
+      { id: "wfh-6", title: "Remote Graphic Designer", company: "DesignRemote", description: "Create visual designs and graphics for clients from home. Work with design software and collaborate with teams online.", imageUrl: "/next.svg", type: "Work from Home" as const }
     ]
   };
 
@@ -133,8 +178,12 @@ export default function Home() {
       {/* Header */}
       <Header onMenuToggle={handleMenuToggle} />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+      {/* Scrolling Text - Full Width */}
+      {/* <ScrollingText /> */}
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-2 lg:px-4 py-4 sm:py-8">
         <div className="space-y-8 sm:space-y-12">
+
           {/* Hero Section */}
           <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 rounded-2xl p-6 sm:p-8 lg:p-12 text-white relative">
             {/* Resume Link - Top Left */}
@@ -173,27 +222,6 @@ export default function Home() {
                   <span className="text-xs">Healthcare Job</span>
                 </Link>
                 <Link
-                  href="/user/courses?category=manufacturing"
-                  className="bg-white/20 backdrop-blur-sm text-white px-2 py-2 rounded-lg font-medium hover:bg-white/30 transition-all duration-300 border border-white/30 flex items-center justify-center gap-2 text-center min-h-[50px] group"
-                >
-                  <Icon icon="mdi:factory" className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                  <span className="text-xs">Manufacturing Job</span>
-                </Link>
-                <Link
-                  href="/user/courses?category=education"
-                  className="bg-white/20 backdrop-blur-sm text-white px-2 py-2 rounded-lg font-medium hover:bg-white/30 transition-all duration-300 border border-white/30 flex items-center justify-center gap-2 text-center min-h-[50px] group"
-                >
-                  <Icon icon="mdi:school" className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                  <span className="text-xs">Education Job</span>
-                </Link>
-                <Link
-                  href="/user/courses?category=retail"
-                  className="bg-white/20 backdrop-blur-sm text-white px-2 py-2 rounded-lg font-medium hover:bg-white/30 transition-all duration-300 border border-white/30 flex items-center justify-center gap-2 text-center min-h-[50px] group"
-                >
-                  <Icon icon="mdi:shopping" className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                  <span className="text-xs">Retail Job</span>
-                </Link>
-                <Link
                   href="/user/courses?category=marketing"
                   className="bg-white/20 backdrop-blur-sm text-white px-2 py-2 rounded-lg font-medium hover:bg-white/30 transition-all duration-300 border border-white/30 flex items-center justify-center gap-2 text-center min-h-[50px] group"
                 >
@@ -221,6 +249,13 @@ export default function Home() {
                   <Icon icon="mdi:account-group" className="w-4 h-4 group-hover:scale-110 transition-transform" />
                   <span className="text-xs">Consulting Job</span>
                 </Link>
+                <Link
+                  href="/user/courses?category=workfromhome"
+                  className="bg-white/20 backdrop-blur-sm text-white px-2 py-2 rounded-lg font-medium hover:bg-white/30 transition-all duration-300 border border-white/30 flex items-center justify-center gap-2 text-center min-h-[50px] group"
+                >
+                  <Icon icon="mdi:home" className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                  <span className="text-xs">Work from Home</span>
+                </Link>
               </div>
 
               {/* Desktop Quick Access Links */}
@@ -231,6 +266,20 @@ export default function Home() {
                 >
                   <Icon icon="mdi:laptop" className="w-5 h-5" />
                   IT Job
+                </Link>
+                <Link
+                  href="/user/courses?category=workfromhome"
+                  className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-lg font-medium hover:bg-white/30 transition-all duration-300 border border-white/30 flex items-center gap-2"
+                >
+                  <Icon icon="mdi:home" className="w-5 h-5" />
+                  Work from Home
+                </Link>
+                <Link
+                  href="/user/courses?category=Internship"
+                  className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-lg font-medium hover:bg-white/30 transition-all duration-300 border border-white/30 flex items-center gap-2"
+                >
+                  <Icon icon="mdi:home" className="w-5 h-5" />
+                  Internship 
                 </Link>
                 <Link
                   href="/user/courses?category=banking"
@@ -245,27 +294,6 @@ export default function Home() {
                 >
                   <Icon icon="mdi:medical-bag" className="w-5 h-5" />
                   Healthcare Job
-                </Link>
-                <Link
-                  href="/user/courses?category=manufacturing"
-                  className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-lg font-medium hover:bg-white/30 transition-all duration-300 border border-white/30 flex items-center gap-2"
-                >
-                  <Icon icon="mdi:factory" className="w-5 h-5" />
-                  Manufacturing Job
-                </Link>
-                <Link
-                  href="/user/courses?category=education"
-                  className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-lg font-medium hover:bg-white/30 transition-all duration-300 border border-white/30 flex items-center gap-2"
-                >
-                  <Icon icon="mdi:school" className="w-5 h-5" />
-                  Education Job
-                </Link>
-                <Link
-                  href="/user/courses?category=retail"
-                  className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-lg font-medium hover:bg-white/30 transition-all duration-300 border border-white/30 flex items-center gap-2"
-                >
-                  <Icon icon="mdi:shopping" className="w-5 h-5" />
-                  Retail Job
                 </Link>
                 <Link
                   href="/user/courses?category=marketing"
@@ -295,6 +323,7 @@ export default function Home() {
                   <Icon icon="mdi:account-group" className="w-5 h-5" />
                   Consulting Job
                 </Link>
+ 
               </div>
 
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6">
@@ -342,16 +371,17 @@ export default function Home() {
                   Login
                 </Link>
                 <Link
-                  href="/about"
+                  href="/ContactUs"
                   className="border-2 border-white text-white px-6 py-2 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors text-center"
                 >
-                  About Us
+                  Contact Us
                 </Link>
               </div>
             </div>
           </div>
 
-
+          {/* Advertisement Section */}
+          <AdsterraBanner />
 
           {/* Job Cards Section with Tabs */}
           <div className="bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-gray-200">
@@ -413,6 +443,9 @@ export default function Home() {
               </div>
             </div>
           </div>
+
+          {/* Moving Logos Section */}
+          <MovingLogos />
 
           {/* Customer Reviews Section */}
           <CustomerReview />

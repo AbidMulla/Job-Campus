@@ -197,6 +197,9 @@ export default function Batch() {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         <div className="space-y-8 sm:space-y-4">
+
+
+
           {/* Page Header */}
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{getDynamicTitle()}</h1>
@@ -280,6 +283,10 @@ export default function Batch() {
             </div>
           </div>
 
+          {/* Advertisement Banner */}
+
+
+
           {/* Job Cards Section */}
           <div className="bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-gray-200">
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 text-center mb-8">
@@ -311,6 +318,8 @@ export default function Batch() {
               </div>
             )}
           </div>
+
+
 
           {/* Similar Jobs Section */}
           <div className="bg-white p-6 sm:p-8 rounded-xl  border-gray-200">

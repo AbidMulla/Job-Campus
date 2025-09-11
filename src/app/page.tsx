@@ -1,69 +1,14 @@
 'use client';
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { Icon } from '@iconify/react';
 import Header from '@/components/user/Header';
 import Sidebar from '@/components/user/Sidebar';
 import JobCard from '@/components/user/JobCard';
-import ScrollingText from '@/components/user/ScrollingText';
 import MovingLogos from '@/components/user/MovingLogos';
 import CustomerReview from '@/components/user/CustomerReview';
 import Footer from '@/components/user/Footer';
 
-// Adsterra Banner Component
-function AdsterraBanner() {
-  const banner = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (banner.current) {
-      banner.current.innerHTML = "";
-    }
-
-    // Default desktop banner
-    let atOptions = {
-      key: "49c501ac723291f0b3e32b6bba490d74",
-      format: "iframe",
-      height: 90,
-      width: 728,
-      params: {},
-    };
-
-    // Adjust banner size based on screen width
-    if (window.innerWidth < 768) {
-      // Mobile
-      atOptions = {
-        key: "49c501ac723291f0b3e32b6bba490d74",
-        format: "iframe",
-        height: 50,
-        width: 320,
-        params: {},
-      };
-    }
-
-    (window as any).atOptions = atOptions;
-
-    const script = document.createElement("script");
-    script.type = "text/javascript";
-    script.src =
-      "//www.highperformanceformat.com/49c501ac723291f0b3e32b6bba490d74/invoke.js";
-
-    if (banner.current) {
-      banner.current.appendChild(script);
-    }
-
-    return () => {
-      if (banner.current) {
-        banner.current.innerHTML = "";
-      }
-    };
-  }, []);
-
-  return (
-    <div className="flex justify-center items-center w-full overflow-x-auto">
-      <div ref={banner} className="max-w-full"></div>
-    </div>
-  );
-}
 
 export default function Home() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -181,8 +126,10 @@ export default function Home() {
       {/* Scrolling Text - Full Width */}
       {/* <ScrollingText /> */}
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-2 lg:px-4 py-4 sm:py-8">
-        <div className="space-y-8 sm:space-y-12">
+
+      <div className="w-full relative">
+        <div className="max-w-6xl mx-auto px-4 sm:px-2 lg:px-4 py-4 sm:py-8">
+          <div className="space-y-8 sm:space-y-12">
 
           {/* Hero Section */}
           <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 rounded-2xl p-6 sm:p-8 lg:p-12 text-white relative">
@@ -380,8 +327,9 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Advertisement Section */}
-          <AdsterraBanner />
+
+
+
 
           {/* Job Cards Section with Tabs */}
           <div className="bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-gray-200">
@@ -521,6 +469,10 @@ export default function Home() {
           </div>
         </div>
       </div>
+      
+      </div>
+
+
 
       {/* Footer */}
       <Footer />

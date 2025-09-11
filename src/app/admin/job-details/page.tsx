@@ -5,10 +5,41 @@ import { Icon } from '@iconify/react';
 import Link from 'next/link';
 import BreadCrumbs from '@/components/admin/BreadCrumbs';
 
+interface JobData {
+  id: number;
+  title: string;
+  company: string;
+  location: string;
+  status: string;
+  category: string;
+  jobType: string;
+  employmentType: string;
+  postedDate: string;
+  expireDate: string;
+  applications: number;
+  views: number;
+  salary: string;
+  experience?: string;
+  description: string;
+  aboutCompany?: string;
+  jobDescription?: string;
+  requirements: string[];
+  responsibilities: string[];
+  benefits: string[];
+  contactEmail: string;
+  contactPhone: string;
+  applicationLink?: string;
+  socialLinks?: {
+    whatsapp?: string;
+    telegram?: string;
+    emailUpdates?: string;
+  };
+}
+
 export default function JobDetails() {
   const searchParams = useSearchParams();
   const jobId = searchParams.get('id');
-  const [job, setJob] = useState<any>(null);
+  const [job, setJob] = useState<JobData | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Mock job data - in real app, this would come from an API
@@ -229,7 +260,7 @@ export default function JobDetails() {
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
           <Icon icon="fluent:error-circle-24-regular" className="w-16 h-16 text-red-500 mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Job Not Found</h2>
-          <p className="text-gray-600 mb-6">The job you're looking for doesn't exist or has been removed.</p>
+          <p className="text-gray-600 mb-6">The job you&apos;re looking for doesn&apos;t exist or has been removed.</p>
           <Link 
             href="/admin/job-management"
             className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
@@ -464,7 +495,7 @@ export default function JobDetails() {
               </li>
               <li className="flex items-start gap-3">
                 <Icon icon="fluent:checkmark-circle-24-regular" className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
-                <span className="text-gray-700">Bachelor's degree in IT, CSE, Business Administration, Commerce, Science</span>
+                <span className="text-gray-700">Bachelor&apos;s degree in IT, CSE, Business Administration, Commerce, Science</span>
               </li>
               <li className="flex items-start gap-3">
                 <Icon icon="fluent:checkmark-circle-24-regular" className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />

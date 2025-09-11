@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Icon } from '@iconify/react';
 import Link from 'next/link';
@@ -36,7 +36,7 @@ interface JobData {
   };
 }
 
-export default function JobDetails() {
+function JobDetailsContent() {
   const searchParams = useSearchParams();
   const jobId = searchParams.get('id');
   const [job, setJob] = useState<JobData | null>(null);
@@ -188,7 +188,7 @@ export default function JobDetails() {
     if (jobId) {
       fetchJob();
     }
-  }, [jobId]);
+  }, [jobId, mockJobs]);
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {
@@ -565,5 +565,13 @@ export default function JobDetails() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function JobDetails() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <JobDetailsContent />
+    </Suspense>
   );
 }

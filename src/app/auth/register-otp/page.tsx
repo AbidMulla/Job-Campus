@@ -31,7 +31,7 @@ export default function RegisterOTP() {
         <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-8">
           {/* Header */}
           <div className="text-center mb-8">
-            <p className="text-sm text-gray-500 mb-2">We've sent a verification code to your email</p>
+            <p className="text-sm text-gray-500 mb-2">We&apos;ve sent a verification code to your email</p>
             <h1 className="text-2xl font-bold text-gray-900">Verify your email</h1>
           </div>
 
@@ -60,7 +60,7 @@ export default function RegisterOTP() {
             {/* Resend Link */}
             <div className="text-center">
               <p className="text-sm text-gray-600">
-                Didn't receive the code?{' '}
+                Didn&apos;t receive the code?{' '}
                 <button type="button" className="text-blue-600 hover:text-blue-700 font-semibold">
                   Resend
                 </button>

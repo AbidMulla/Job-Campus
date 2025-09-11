@@ -33,7 +33,7 @@ export default function ForgotPasswordOTP() {
             Verify your email
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            We've sent a verification code to your email to reset your password
+            We&apos;ve sent a verification code to your email to reset your password
           </p>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
@@ -56,7 +56,7 @@ export default function ForgotPasswordOTP() {
 
           <div className="text-center">
             <p className="text-sm text-gray-600">
-              Didn't receive the code?{' '}
+              Didn&apos;t receive the code?{' '}
               <button type="button" className="font-medium text-blue-600 hover:text-blue-500">
                 Resend
               </button>

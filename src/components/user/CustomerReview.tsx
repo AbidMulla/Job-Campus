@@ -146,7 +146,7 @@ export default function CustomerReview({
 
                      {/* Review Text */}
                      <blockquote className="text-sm text-gray-700 mb-6 leading-relaxed text-justify">
-                       "{review.review}"
+                       &ldquo;{review.review}&rdquo;
                      </blockquote>
 
                      {/* User Info */}

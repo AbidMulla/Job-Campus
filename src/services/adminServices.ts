@@ -7,7 +7,7 @@ export const adminServices = {
   },
 
   // Update admin profile
-  updateAdminProfile: async (adminId: string, data: any) => {
+  updateAdminProfile: async (adminId: string, data: Record<string, unknown>) => {
     // TODO: Implement API call to update admin profile
     return { success: true, message: 'Admin profile updated successfully' };
   },

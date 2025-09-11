@@ -16,7 +16,7 @@ export default function ForgotPassword() {
         <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-8">
           {/* Header */}
           <div className="text-center mb-8">
-            <p className="text-sm text-gray-500 mb-2">Enter your email address and we'll send you a link to reset your password</p>
+            <p className="text-sm text-gray-500 mb-2">Enter your email address and we&apos;ll send you a link to reset your password</p>
             <h1 className="text-2xl font-bold text-gray-900">Reset your password</h1>
           </div>
 

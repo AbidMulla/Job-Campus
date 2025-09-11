@@ -7,7 +7,7 @@ export const authServices = {
   },
 
   // Register user
-  register: async (userData: any) => {
+  register: async (userData: Record<string, unknown>) => {
     // TODO: Implement API call for registration
     return { success: true, message: 'Registration successful' };
   },

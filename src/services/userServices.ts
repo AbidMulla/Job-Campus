@@ -7,7 +7,7 @@ export const userServices = {
   },
 
   // Update user profile
-  updateUserProfile: async (userId: string, data: any) => {
+  updateUserProfile: async (userId: string, data: Record<string, unknown>) => {
     // TODO: Implement API call to update user profile
     return { success: true, message: 'Profile updated successfully' };
   },

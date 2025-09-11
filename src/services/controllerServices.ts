@@ -21,14 +21,15 @@ axiosInstance.interceptors.request.use(
     }
     return config;
   },
-  (error: any) => Promise.reject(error)
+  (error: unknown) => Promise.reject(error)
 );
 
 // Response interceptor - handles common errors
 axiosInstance.interceptors.response.use(
   (response: AxiosResponse) => response,
-  (error: any) => {
-    const { response } = error;
+  (error: unknown) => {
+    const axiosError = error as { response?: { status: number; data?: { message?: string } } };
+    const { response } = axiosError;
 
     if (!response) {
       console.error('Network/Server Error', error);
@@ -112,7 +113,7 @@ axiosInstance.interceptors.response.use(
 );
 
 // TypeScript interfaces
-interface ApiResponse<T = any> {
+interface ApiResponse<T = unknown> {
   data: T;
   message?: string;
   success?: boolean;
@@ -126,62 +127,62 @@ interface CustomConfig extends AxiosRequestConfig {
 // Handles API calls and passes errors from backend to frontend
 const ApiController = {
   // GET request
-  get: async <T = any>(endpoint: string, customConfig: CustomConfig = {}): Promise<T> => {
+  get: async <T = unknown>(endpoint: string, customConfig: CustomConfig = {}): Promise<T> => {
     try {
       const response = await axiosInstance.get<T>(endpoint, customConfig);
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('GET Error:', error);
       throw error;
     }
   },
 
   // POST request
-  post: async <T = any>(endpoint: string, data: any = {}, customConfig: CustomConfig = {}): Promise<T> => {
+  post: async <T = unknown>(endpoint: string, data: Record<string, unknown> = {}, customConfig: CustomConfig = {}): Promise<T> => {
     try {
       const response = await axiosInstance.post<T>(endpoint, data, customConfig);
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('POST Error:', error);
       throw error;
     }
   },
 
   // PUT request
-  put: async <T = any>(endpoint: string, data: any = {}, customConfig: CustomConfig = {}): Promise<T> => {
+  put: async <T = unknown>(endpoint: string, data: Record<string, unknown> = {}, customConfig: CustomConfig = {}): Promise<T> => {
     try {
       const response = await axiosInstance.put<T>(endpoint, data, customConfig);
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('PUT Error:', error);
       throw error;
     }
   },
 
   // PATCH request
-  patch: async <T = any>(endpoint: string, data: any = {}, customConfig: CustomConfig = {}): Promise<T> => {
+  patch: async <T = unknown>(endpoint: string, data: Record<string, unknown> = {}, customConfig: CustomConfig = {}): Promise<T> => {
     try {
       const response = await axiosInstance.patch<T>(endpoint, data, customConfig);
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('PATCH Error:', error);
       throw error;
     }
   },
 
   // DELETE request
-  delete: async <T = any>(endpoint: string, customConfig: CustomConfig = {}): Promise<T> => {
+  delete: async <T = unknown>(endpoint: string, customConfig: CustomConfig = {}): Promise<T> => {
     try {
       const response = await axiosInstance.delete<T>(endpoint, customConfig);
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('DELETE Error:', error);
       throw error;
     }
   },
 
   // Single file upload
-  uploadSingleFile: async <T = any>(endpoint: string, file: File, customConfig: CustomConfig = {}): Promise<T> => {
+  uploadSingleFile: async <T = unknown>(endpoint: string, file: File, customConfig: CustomConfig = {}): Promise<T> => {
     try {
       const formData = new FormData();
       formData.append('file', file);
@@ -195,14 +196,14 @@ const ApiController = {
 
       const response = await axiosInstance.post<T>(endpoint, formData, config);
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Single File Upload Error:', error);
       throw error;
     }
   },
 
   // Upload multiple files
-  uploadMultipleFiles: async <T = any>(endpoint: string, files: File[], customConfig: CustomConfig = {}): Promise<T> => {
+  uploadMultipleFiles: async <T = unknown>(endpoint: string, files: File[], customConfig: CustomConfig = {}): Promise<T> => {
     try {
       const formData = new FormData();
       
@@ -220,7 +221,7 @@ const ApiController = {
 
       const response = await axiosInstance.post<T>(endpoint, formData, config);
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Multiple Files Upload Error:', error);
       throw error;
     }

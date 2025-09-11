@@ -198,7 +198,7 @@ export default function JobDetailsPage() {
                                 </li>
                                 <li className="flex items-start">
                                     <span className="text-blue-600 mr-2">•</span>
-                                   Bachelor's degree in IT, CSE, Business Administration, Commerce, Science
+                                   Bachelor&apos;s degree in IT, CSE, Business Administration, Commerce, Science
                                 </li>
                                 <li className="flex items-start">
                                     <span className="text-blue-600 mr-2">•</span>

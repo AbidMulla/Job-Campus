@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Icon } from '@iconify/react';
 import Header from '@/components/user/Header';
@@ -12,7 +12,44 @@ import Footer from '@/components/user/Footer';
 
 export default function Home() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState('all');
+  const [activeTab, setActiveTab] = useState('it');
+
+  // Load ad scripts on client side to prevent hydration issues
+  useEffect(() => {
+    // Load first ad script
+    const script1 = document.createElement('script');
+    script1.async = true;
+    script1.setAttribute('data-cfasync', 'false');
+    script1.src = '//pl27628960.revenuecpmgate.com/1e9a392fbc3c6aaed245ee4b1bac94d6/invoke.js';
+    document.head.appendChild(script1);
+
+    // Load second ad script with configuration
+    const configScript = document.createElement('script');
+    configScript.type = 'text/javascript';
+    configScript.innerHTML = `
+      atOptions = {
+        'key' : 'd732b4a1900cb80c41bcf8c1f2c2d7b8',
+        'format' : 'iframe',
+        'height' : 90,
+        'width' : 728,
+        'params' : {}
+      };
+    `;
+    document.head.appendChild(configScript);
+
+    const script2 = document.createElement('script');
+    script2.type = 'text/javascript';
+    script2.src = '//www.highperformanceformat.com/d732b4a1900cb80c41bcf8c1f2c2d7b8/invoke.js';
+    document.head.appendChild(script2);
+
+    // Cleanup function
+    return () => {
+      // Remove scripts on component unmount
+      if (script1.parentNode) script1.parentNode.removeChild(script1);
+      if (configScript.parentNode) configScript.parentNode.removeChild(configScript);
+      if (script2.parentNode) script2.parentNode.removeChild(script2);
+    };
+  }, []);
 
   const handleMenuToggle = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -44,74 +81,50 @@ export default function Home() {
   };
 
   const jobTabs = [
-    { id: 'all', label: 'Start All IT Job', icon: 'mdi:laptop' },
-    { id: 'banking', label: 'Banking Job', icon: 'mdi:bank' },
-    { id: 'healthcare', label: 'Healthcare Job', icon: 'mdi:medical-bag' },
-    { id: 'marketing', label: 'Marketing Job', icon: 'mdi:bullhorn' },
-    { id: 'design', label: 'Design Job', icon: 'mdi:palette' },
-    { id: 'engineering', label: 'Engineering Job', icon: 'mdi:cog' },
-    { id: 'consulting', label: 'Consulting Job', icon: 'mdi:account-group' },
-    { id: 'workfromhome', label: 'Work from Home', icon: 'mdi:home' }
+    { id: 'it', label: 'IT jobs', icon: 'mdi:laptop' },
+    { id: 'non-it', label: 'non-IT', icon: 'mdi:briefcase' },
+    { id: 'walk-in', label: 'walk-in drive', icon: 'mdi:walk' },
+    { id: 'work-from-home', label: 'work from home', icon: 'mdi:home' }
   ];
 
   // Job data for each category
   const jobData = {
-    all: [
+    it: [
       { id: "job-1", title: "Senior React Developer", company: "TechCorp", description: "We are looking for an experienced React developer to join our dynamic team. You will work on cutting-edge web applications and collaborate with talented engineers.", imageUrl: "/next.svg", type: "Full-time" as const, isUrgent: true },
-      { id: "job-2", title: "UI/UX Designer", company: "DesignStudio", description: "Join our creative team as a UI/UX Designer. Create beautiful and intuitive user experiences for our digital products and platforms.", imageUrl: "/next.svg", type: "Full-time" as const },
+      { id: "job-2", title: "Frontend Developer", company: "WebSolutions", description: "Join our remote team as a Frontend Developer. Build responsive web applications using modern technologies like React and TypeScript.", imageUrl: "/next.svg", type: "Contract" as const },
       { id: "job-3", title: "Data Scientist", company: "Analytics Inc", description: "Help us build intelligent solutions using machine learning and data analysis. Work with large datasets and develop predictive models.", imageUrl: "/next.svg", type: "Full-time" as const },
-      { id: "job-4", title: "Frontend Developer", company: "WebSolutions", description: "Join our remote team as a Frontend Developer. Build responsive web applications using modern technologies like React and TypeScript.", imageUrl: "/next.svg", type: "Contract" as const },
-      { id: "job-5", title: "Product Manager", company: "InnovateTech", description: "Lead product development initiatives and work closely with engineering teams to deliver exceptional user experiences.", imageUrl: "/next.svg", type: "Full-time" as const, isUrgent: true },
-      { id: "job-6", title: "DevOps Engineer", company: "CloudTech", description: "Manage our cloud infrastructure and implement CI/CD pipelines. Ensure high availability and performance of our systems.", imageUrl: "/next.svg", type: "Full-time" as const }
+      { id: "job-4", title: "DevOps Engineer", company: "CloudTech", description: "Manage our cloud infrastructure and implement CI/CD pipelines. Ensure high availability and performance of our systems.", imageUrl: "/next.svg", type: "Full-time" as const },
+      { id: "job-5", title: "Software Engineer", company: "SoftwareCorp", description: "Develop high-quality software solutions using modern technologies.", imageUrl: "/next.svg", type: "Full-time" as const, isUrgent: true },
+      { id: "job-6", title: "Full Stack Developer", company: "InnovateTech", description: "Lead product development initiatives and work closely with engineering teams to deliver exceptional user experiences.", imageUrl: "/next.svg", type: "Full-time" as const }
     ],
-    banking: [
-      { id: "bank-1", title: "Banking Analyst", company: "GlobalBank", description: "Analyze financial data and market trends to support strategic decision-making in our banking operations.", imageUrl: "/next.svg", type: "Full-time" as const, isUrgent: true },
-      { id: "bank-2", title: "Credit Risk Manager", company: "SecureBank", description: "Manage credit risk assessment and develop strategies to minimize financial losses.", imageUrl: "/next.svg", type: "Full-time" as const },
-      { id: "bank-3", title: "Investment Advisor", company: "WealthBank", description: "Provide investment advice and portfolio management services to high-net-worth clients.", imageUrl: "/next.svg", type: "Full-time" as const },
-      { id: "bank-4", title: "Compliance Officer", company: "RegBank", description: "Ensure banking operations comply with regulatory requirements and industry standards.", imageUrl: "/next.svg", type: "Full-time" as const }
+    "non-it": [
+      { id: "non-it-1", title: "Marketing Manager", company: "MarketPro", description: "Lead marketing campaigns and strategies to increase brand awareness and customer engagement.", imageUrl: "/next.svg", type: "Full-time" as const, isUrgent: true },
+      { id: "non-it-2", title: "HR Specialist", company: "HRSolutions", description: "Manage recruitment processes and employee relations in a dynamic work environment.", imageUrl: "/next.svg", type: "Full-time" as const },
+      { id: "non-it-3", title: "Sales Executive", company: "SalesForce", description: "Drive sales growth and build relationships with clients across various industries.", imageUrl: "/next.svg", type: "Full-time" as const },
+      { id: "non-it-4", title: "Financial Analyst", company: "FinanceHub", description: "Analyze financial data and provide insights for business decision-making.", imageUrl: "/next.svg", type: "Full-time" as const, isUrgent: true },
+      { id: "non-it-5", title: "Content Writer", company: "ContentCorp", description: "Create engaging content for websites, blogs, and marketing materials.", imageUrl: "/next.svg", type: "Contract" as const },
+      { id: "non-it-6", title: "Customer Service Representative", company: "ServicePro", description: "Provide excellent customer support and resolve customer inquiries.", imageUrl: "/next.svg", type: "Full-time" as const }
     ],
-    healthcare: [
-      { id: "health-1", title: "Medical Data Analyst", company: "HealthTech", description: "Analyze healthcare data to improve patient outcomes and operational efficiency.", imageUrl: "/next.svg", type: "Full-time" as const, isUrgent: true },
-      { id: "health-2", title: "Healthcare IT Specialist", company: "MedSystems", description: "Implement and maintain healthcare information systems and electronic health records.", imageUrl: "/next.svg", type: "Full-time" as const },
-      { id: "health-3", title: "Clinical Research Coordinator", company: "ResearchMed", description: "Coordinate clinical trials and research studies in healthcare settings.", imageUrl: "/next.svg", type: "Full-time" as const },
-      { id: "health-4", title: "Healthcare Administrator", company: "HealthAdmin", description: "Manage healthcare facility operations and administrative processes.", imageUrl: "/next.svg", type: "Full-time" as const }
+    "walk-in": [
+      { id: "walk-in-1", title: "Junior Developer - Walk-in", company: "TechStart", description: "Walk-in interview for junior developers. Immediate joining for the right candidates.", imageUrl: "/next.svg", type: "Walk-in" as const, isUrgent: true },
+      { id: "walk-in-2", title: "Sales Associate - Walk-in", company: "RetailMax", description: "Walk-in interviews for sales positions. No prior experience required, training provided.", imageUrl: "/next.svg", type: "Walk-in" as const, isUrgent: true },
+      { id: "walk-in-3", title: "Customer Support - Walk-in", company: "SupportDesk", description: "Immediate openings for customer support roles. Walk-in interviews daily.", imageUrl: "/next.svg", type: "Walk-in" as const },
+      { id: "walk-in-4", title: "Data Entry Operator - Walk-in", company: "DataCorp", description: "Walk-in interviews for data entry positions. Flexible timing available.", imageUrl: "/next.svg", type: "Walk-in" as const },
+      { id: "walk-in-5", title: "Marketing Executive - Walk-in", company: "MarketingPlus", description: "Walk-in drive for marketing executives. Fresh graduates welcome.", imageUrl: "/next.svg", type: "Walk-in" as const, isUrgent: true },
+      { id: "walk-in-6", title: "HR Assistant - Walk-in", company: "HRTeam", description: "Immediate hiring for HR assistant roles through walk-in interviews.", imageUrl: "/next.svg", type: "Walk-in" as const }
     ],
-    marketing: [
-      { id: "mkt-1", title: "Digital Marketing Manager", company: "DigitalMkt", description: "Lead digital marketing campaigns and strategies across multiple channels.", imageUrl: "/next.svg", type: "Full-time" as const, isUrgent: true },
-      { id: "mkt-2", title: "SEO Specialist", company: "SEOSpecialist", description: "Optimize website content and improve search engine rankings.", imageUrl: "/next.svg", type: "Full-time" as const },
-      { id: "mkt-3", title: "Social Media Manager", company: "SocialMkt", description: "Manage social media presence and engage with online communities.", imageUrl: "/next.svg", type: "Full-time" as const },
-      { id: "mkt-4", title: "Content Marketing Strategist", company: "ContentMkt", description: "Develop and execute content marketing strategies to drive engagement.", imageUrl: "/next.svg", type: "Full-time" as const }
-    ],
-    design: [
-      { id: "design-1", title: "UI/UX Designer", company: "DesignStudio", description: "Create beautiful and intuitive user experiences for digital products.", imageUrl: "/next.svg", type: "Full-time" as const, isUrgent: true },
-      { id: "design-2", title: "Graphic Designer", company: "GraphicDesign", description: "Design compelling visual content for marketing and branding materials.", imageUrl: "/next.svg", type: "Full-time" as const },
-      { id: "design-3", title: "Product Designer", company: "ProductDesign", description: "Design innovative product solutions and user interfaces.", imageUrl: "/next.svg", type: "Full-time" as const },
-      { id: "design-4", title: "Brand Designer", company: "BrandDesign", description: "Develop and maintain brand identity and visual guidelines.", imageUrl: "/next.svg", type: "Full-time" as const }
-    ],
-    engineering: [
-      { id: "eng-1", title: "Software Engineer", company: "SoftwareCorp", description: "Develop high-quality software solutions using modern technologies.", imageUrl: "/next.svg", type: "Full-time" as const, isUrgent: true },
-      { id: "eng-2", title: "Data Engineer", company: "DataEngineering", description: "Build and maintain data pipelines and infrastructure.", imageUrl: "/next.svg", type: "Full-time" as const },
-      { id: "eng-3", title: "DevOps Engineer", company: "DevOpsCorp", description: "Manage cloud infrastructure and implement CI/CD pipelines.", imageUrl: "/next.svg", type: "Full-time" as const },
-      { id: "eng-4", title: "Systems Engineer", company: "SystemsCorp", description: "Design and maintain complex system architectures.", imageUrl: "/next.svg", type: "Full-time" as const }
-    ],
-    consulting: [
-      { id: "consult-1", title: "Business Consultant", company: "BusinessConsult", description: "Provide strategic business advice and solutions to clients.", imageUrl: "/next.svg", type: "Full-time" as const, isUrgent: true },
-      { id: "consult-2", title: "IT Consultant", company: "ITConsulting", description: "Advise on technology strategy and digital transformation.", imageUrl: "/next.svg", type: "Full-time" as const },
-      { id: "consult-3", title: "Management Consultant", company: "ManagementConsult", description: "Help organizations improve performance and efficiency.", imageUrl: "/next.svg", type: "Full-time" as const },
-      { id: "consult-4", title: "Strategy Consultant", company: "StrategyConsult", description: "Develop strategic plans and business strategies.", imageUrl: "/next.svg", type: "Full-time" as const }
-    ],
-    workfromhome: [
+    "work-from-home": [
       { id: "wfh-1", title: "Remote Software Developer", company: "RemoteTech", description: "Work from home as a software developer. Build applications using modern technologies and collaborate with distributed teams.", imageUrl: "/next.svg", type: "Work from Home" as const, isUrgent: true },
       { id: "wfh-2", title: "Virtual Customer Support", company: "SupportRemote", description: "Provide customer support from the comfort of your home. Handle inquiries and resolve issues through phone, email, and chat.", imageUrl: "/next.svg", type: "Work from Home" as const },
       { id: "wfh-3", title: "Online Content Writer", company: "ContentRemote", description: "Create engaging content for websites, blogs, and social media. Work flexible hours from anywhere with internet connection.", imageUrl: "/next.svg", type: "Work from Home" as const },
       { id: "wfh-4", title: "Remote Data Entry Specialist", company: "DataRemote", description: "Handle data entry tasks remotely. Input and maintain accurate records in various databases and systems.", imageUrl: "/next.svg", type: "Work from Home" as const },
       { id: "wfh-5", title: "Virtual Assistant", company: "VirtualAssist", description: "Provide administrative support to businesses remotely. Manage schedules, emails, and various administrative tasks.", imageUrl: "/next.svg", type: "Work from Home" as const },
-      { id: "wfh-6", title: "Remote Graphic Designer", company: "DesignRemote", description: "Create visual designs and graphics for clients from home. Work with design software and collaborate with teams online.", imageUrl: "/next.svg", type: "Work from Home" as const }
+      { id: "wfh-6", title: "Remote Graphic Designer", company: "DesignRemote", description: "Create visual designs and graphics for clients from home. Work with design software and collaborate with teams online.", imageUrl: "/next.svg", type: "Work from Home" as const, isUrgent: true }
     ]
   };
 
   // Get current jobs based on active tab
-  const currentJobs = jobData[activeTab as keyof typeof jobData] || jobData.all;
+  const currentJobs = jobData[activeTab as keyof typeof jobData] || jobData.it;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -134,15 +147,7 @@ export default function Home() {
           {/* Hero Section */}
           <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 rounded-2xl p-6 sm:p-8 lg:p-12 text-white relative">
             {/* Resume Link - Top Left */}
-            <div className="absolute top-4 left-4 sm:top-2 sm:left-2">
-              <Link
-                href="/resume"
-                className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-lg font-medium hover:bg-white/30 transition-all duration-300 border border-white/30 flex items-center gap-2 text-sm sm:text-base group"
-              >
-                <Icon icon="mdi:file-document" className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                <span>Do you want resume?</span>
-              </Link>
-            </div>
+
             
             <div className="max-w-4xl mx-auto text-center mt-3">
               {/* Quick Access Links */}
@@ -152,56 +157,28 @@ export default function Home() {
                   className="bg-white/20 backdrop-blur-sm text-white px-2 py-2 rounded-lg font-medium hover:bg-white/30 transition-all duration-300 border border-white/30 flex items-center justify-center gap-2 text-center min-h-[50px] group"
                 >
                   <Icon icon="mdi:laptop" className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                  <span className="text-xs">IT Job</span>
+                  <span className="text-xs">IT jobs</span>
                 </Link>
                 <Link
-                  href="/user/courses?category=banking"
+                  href="/user/courses?category=non-it"
                   className="bg-white/20 backdrop-blur-sm text-white px-2 py-2 rounded-lg font-medium hover:bg-white/30 transition-all duration-300 border border-white/30 flex items-center justify-center gap-2 text-center min-h-[50px] group"
                 >
-                  <Icon icon="mdi:bank" className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                  <span className="text-xs">Banking Job</span>
+                  <Icon icon="mdi:briefcase" className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                  <span className="text-xs">non-IT</span>
                 </Link>
                 <Link
-                  href="/user/courses?category=healthcare"
+                  href="/user/courses?category=walk-in"
                   className="bg-white/20 backdrop-blur-sm text-white px-2 py-2 rounded-lg font-medium hover:bg-white/30 transition-all duration-300 border border-white/30 flex items-center justify-center gap-2 text-center min-h-[50px] group"
                 >
-                  <Icon icon="mdi:medical-bag" className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                  <span className="text-xs">Healthcare Job</span>
+                  <Icon icon="mdi:walk" className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                  <span className="text-xs">walk-in drive</span>
                 </Link>
                 <Link
-                  href="/user/courses?category=marketing"
-                  className="bg-white/20 backdrop-blur-sm text-white px-2 py-2 rounded-lg font-medium hover:bg-white/30 transition-all duration-300 border border-white/30 flex items-center justify-center gap-2 text-center min-h-[50px] group"
-                >
-                  <Icon icon="mdi:bullhorn" className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                  <span className="text-xs">Marketing Job</span>
-                </Link>
-                <Link
-                  href="/user/courses?category=design"
-                  className="bg-white/20 backdrop-blur-sm text-white px-2 py-2 rounded-lg font-medium hover:bg-white/30 transition-all duration-300 border border-white/30 flex items-center justify-center gap-2 text-center min-h-[50px] group"
-                >
-                  <Icon icon="mdi:palette" className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                  <span className="text-xs">Design Job</span>
-                </Link>
-                <Link
-                  href="/user/courses?category=engineering"
-                  className="bg-white/20 backdrop-blur-sm text-white px-2 py-2 rounded-lg font-medium hover:bg-white/30 transition-all duration-300 border border-white/30 flex items-center justify-center gap-2 text-center min-h-[50px] group"
-                >
-                  <Icon icon="mdi:cog" className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                  <span className="text-xs">Engineering Job</span>
-                </Link>
-                <Link
-                  href="/user/courses?category=consulting"
-                  className="bg-white/20 backdrop-blur-sm text-white px-2 py-2 rounded-lg font-medium hover:bg-white/30 transition-all duration-300 border border-white/30 flex items-center justify-center gap-2 text-center min-h-[50px] group"
-                >
-                  <Icon icon="mdi:account-group" className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                  <span className="text-xs">Consulting Job</span>
-                </Link>
-                <Link
-                  href="/user/courses?category=workfromhome"
+                  href="/user/courses?category=work-from-home"
                   className="bg-white/20 backdrop-blur-sm text-white px-2 py-2 rounded-lg font-medium hover:bg-white/30 transition-all duration-300 border border-white/30 flex items-center justify-center gap-2 text-center min-h-[50px] group"
                 >
                   <Icon icon="mdi:home" className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                  <span className="text-xs">Work from Home</span>
+                  <span className="text-xs">work from home</span>
                 </Link>
               </div>
 
@@ -212,65 +189,29 @@ export default function Home() {
                   className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-lg font-medium hover:bg-white/30 transition-all duration-300 border border-white/30 flex items-center gap-2"
                 >
                   <Icon icon="mdi:laptop" className="w-5 h-5" />
-                  IT Job
+                  IT jobs
                 </Link>
                 <Link
-                  href="/user/courses?category=workfromhome"
+                  href="/user/courses?category=non-it"
+                  className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-lg font-medium hover:bg-white/30 transition-all duration-300 border border-white/30 flex items-center gap-2"
+                >
+                  <Icon icon="mdi:briefcase" className="w-5 h-5" />
+                  non-IT
+                </Link>
+                <Link
+                  href="/user/courses?category=walk-in"
+                  className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-lg font-medium hover:bg-white/30 transition-all duration-300 border border-white/30 flex items-center gap-2"
+                >
+                  <Icon icon="mdi:walk" className="w-5 h-5" />
+                  walk-in drive
+                </Link>
+                <Link
+                  href="/user/courses?category=work-from-home"
                   className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-lg font-medium hover:bg-white/30 transition-all duration-300 border border-white/30 flex items-center gap-2"
                 >
                   <Icon icon="mdi:home" className="w-5 h-5" />
-                  Work from Home
+                  work from home
                 </Link>
-                <Link
-                  href="/user/courses?category=Internship"
-                  className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-lg font-medium hover:bg-white/30 transition-all duration-300 border border-white/30 flex items-center gap-2"
-                >
-                  <Icon icon="mdi:home" className="w-5 h-5" />
-                  Internship 
-                </Link>
-                <Link
-                  href="/user/courses?category=banking"
-                  className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-lg font-medium hover:bg-white/30 transition-all duration-300 border border-white/30 flex items-center gap-2"
-                >
-                  <Icon icon="mdi:bank" className="w-5 h-5" />
-                  Banking Job
-                </Link>
-                <Link
-                  href="/user/courses?category=healthcare"
-                  className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-lg font-medium hover:bg-white/30 transition-all duration-300 border border-white/30 flex items-center gap-2"
-                >
-                  <Icon icon="mdi:medical-bag" className="w-5 h-5" />
-                  Healthcare Job
-                </Link>
-                <Link
-                  href="/user/courses?category=marketing"
-                  className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-lg font-medium hover:bg-white/30 transition-all duration-300 border border-white/30 flex items-center gap-2"
-                >
-                  <Icon icon="mdi:bullhorn" className="w-5 h-5" />
-                  Marketing Job
-                </Link>
-                <Link
-                  href="/user/courses?category=design"
-                  className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-lg font-medium hover:bg-white/30 transition-all duration-300 border border-white/30 flex items-center gap-2"
-                >
-                  <Icon icon="mdi:palette" className="w-5 h-5" />
-                  Design Job
-                </Link>
-                <Link
-                  href="/user/courses?category=engineering"
-                  className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-lg font-medium hover:bg-white/30 transition-all duration-300 border border-white/30 flex items-center gap-2"
-                >
-                  <Icon icon="mdi:cog" className="w-5 h-5" />
-                  Engineering Job
-                </Link>
-                <Link
-                  href="/user/courses?category=consulting"
-                  className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-lg font-medium hover:bg-white/30 transition-all duration-300 border border-white/30 flex items-center gap-2"
-                >
-                  <Icon icon="mdi:account-group" className="w-5 h-5" />
-                  Consulting Job
-                </Link>
- 
               </div>
 
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6">
@@ -330,6 +271,9 @@ export default function Home() {
 
 
 
+
+          {/* Ad Container - Scripts loaded via useEffect */}
+          <div id="container-1e9a392fbc3c6aaed245ee4b1bac94d6"></div>
 
           {/* Job Cards Section with Tabs */}
           <div className="bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-gray-200">
@@ -394,6 +338,9 @@ export default function Home() {
 
           {/* Moving Logos Section */}
           <MovingLogos />
+
+          {/* Ad Container - Scripts loaded via useEffect */}
+          <div id="container-1e9a392fbc3c6aaed245ee4b1bac94d6"></div>
 
           {/* Customer Reviews Section */}
           <CustomerReview />

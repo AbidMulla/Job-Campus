@@ -1,56 +1,10 @@
 import { useEffect, useRef } from 'react';
 
-// Adsterra Banner Component
-function AdsterraBanner() {
-  const banner = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    // Clear any existing content
-    if (banner.current) {
-      banner.current.innerHTML = '';
-    }
-
-    // Create and append the Adsterra script
-    const script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.innerHTML = `
-      atOptions = {
-        'key': '49c501ac723291f0b3e32b6bba490d74',
-        'format': 'iframe',
-        'height': 90,
-        'width': 728,
-        'params': {}
-      };
-    `;
-
-    const invokeScript = document.createElement('script');
-    invokeScript.type = 'text/javascript';
-    invokeScript.src = '//www.highperformanceformat.com/49c501ac723291f0b3e32b6bba490d74/invoke.js';
-
-    if (banner.current) {
-      banner.current.appendChild(script);
-      banner.current.appendChild(invokeScript);
-    }
-
-    // Cleanup function
-    return () => {
-      if (banner.current) {
-        banner.current.innerHTML = '';
-      }
-    };
-  }, []);
-
-  return (
-    <div className="flex justify-center my-8">
-      <div ref={banner} className="adsterra-banner"></div>
-    </div>
-  );
-}
 
 export default function Footer() {
   return (
     <>
-      <AdsterraBanner />
+     
 
 
       <footer className="bg-gray-900 text-white">

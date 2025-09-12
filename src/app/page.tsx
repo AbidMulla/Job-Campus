@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { Icon } from '@iconify/react';
 import Header from '@/components/user/Header';
@@ -14,42 +14,6 @@ export default function Home() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('it');
 
-  // Load ad scripts on client side to prevent hydration issues
-  useEffect(() => {
-    // Load first ad script
-    const script1 = document.createElement('script');
-    script1.async = true;
-    script1.setAttribute('data-cfasync', 'false');
-    script1.src = '//pl27628960.revenuecpmgate.com/1e9a392fbc3c6aaed245ee4b1bac94d6/invoke.js';
-    document.head.appendChild(script1);
-
-    // Load second ad script with configuration
-    const configScript = document.createElement('script');
-    configScript.type = 'text/javascript';
-    configScript.innerHTML = `
-      atOptions = {
-        'key' : 'd732b4a1900cb80c41bcf8c1f2c2d7b8',
-        'format' : 'iframe',
-        'height' : 90,
-        'width' : 728,
-        'params' : {}
-      };
-    `;
-    document.head.appendChild(configScript);
-
-    const script2 = document.createElement('script');
-    script2.type = 'text/javascript';
-    script2.src = '//www.highperformanceformat.com/d732b4a1900cb80c41bcf8c1f2c2d7b8/invoke.js';
-    document.head.appendChild(script2);
-
-    // Cleanup function
-    return () => {
-      // Remove scripts on component unmount
-      if (script1.parentNode) script1.parentNode.removeChild(script1);
-      if (configScript.parentNode) configScript.parentNode.removeChild(configScript);
-      if (script2.parentNode) script2.parentNode.removeChild(script2);
-    };
-  }, []);
 
   const handleMenuToggle = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -272,8 +236,6 @@ export default function Home() {
 
 
 
-          {/* Ad Container - Scripts loaded via useEffect */}
-          <div id="container-1e9a392fbc3c6aaed245ee4b1bac94d6"></div>
 
           {/* Job Cards Section with Tabs */}
           <div className="bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-gray-200">
@@ -339,8 +301,6 @@ export default function Home() {
           {/* Moving Logos Section */}
           <MovingLogos />
 
-          {/* Ad Container - Scripts loaded via useEffect */}
-          <div id="container-1e9a392fbc3c6aaed245ee4b1bac94d6"></div>
 
           {/* Customer Reviews Section */}
           <CustomerReview />

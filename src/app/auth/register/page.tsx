@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Icon } from '@iconify/react';
 import { authServices } from '../../../services/authServices';
-import { showSuccessToast, showErrorToast } from '../../../utils/toastConfig';
+import { showSuccessToast, showErrorToast } from '../../../utils/simpleToast';
 
 export default function Register() {
   console.log('🔵 Register component mounted');
@@ -111,13 +111,16 @@ export default function Register() {
                 name="fullName"
                 type="text"
                 autoComplete="name"
-                required
+                suppressHydrationWarning
                 className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 placeholder-gray-400 text-gray-900 ${
                   errors.fullName ? 'border-red-300' : 'border-gray-200'
                 }`}
                 placeholder="Enter your full name"
                 value={formData.fullName}
-                onChange={(e) => setFormData({...formData, fullName: e.target.value})}
+                onChange={(e) => {
+                  setFormData({...formData, fullName: e.target.value});
+                  if (errors.fullName) setErrors({...errors, fullName: ''});
+                }}
               />
               {errors.fullName && (
                 <p className="mt-1 text-sm text-red-600">{errors.fullName}</p>
@@ -132,16 +135,18 @@ export default function Register() {
               <input
                 id="email"
                 name="email"
-                type="email"
+                type="text"
                 autoComplete="email"
-                required
                 suppressHydrationWarning
                 className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 placeholder-gray-400 text-gray-900 ${
                   errors.email ? 'border-red-300' : 'border-gray-200'
                 }`}
                 placeholder="Enter your email"
                 value={formData.email}
-                onChange={(e) => setFormData({...formData, email: e.target.value})}
+                onChange={(e) => {
+                  setFormData({...formData, email: e.target.value});
+                  if (errors.email) setErrors({...errors, email: ''});
+                }}
               />
               {errors.email && (
                 <p className="mt-1 text-sm text-red-600">{errors.email}</p>
@@ -158,7 +163,7 @@ export default function Register() {
                 name="phone"
                 type="tel"
                 autoComplete="tel"
-                required
+                suppressHydrationWarning
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 placeholder-gray-400 text-gray-900"
                 placeholder="Enter your phone number"
                 value={formData.phone}
@@ -177,13 +182,16 @@ export default function Register() {
                   name="password"
                   type={showPassword ? "text" : "password"}
                   autoComplete="new-password"
-                  required
+                  suppressHydrationWarning
                   className={`w-full px-4 py-2 pr-12 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 placeholder-gray-400 text-gray-900 ${
                     errors.password ? 'border-red-300' : 'border-gray-200'
                   }`}
                   placeholder="Enter your password"
                   value={formData.password}
-                  onChange={(e) => setFormData({...formData, password: e.target.value})}
+                  onChange={(e) => {
+                    setFormData({...formData, password: e.target.value});
+                    if (errors.password) setErrors({...errors, password: ''});
+                  }}
                 />
                 <button
                   type="button"

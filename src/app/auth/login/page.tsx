@@ -1,10 +1,10 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Icon } from '@iconify/react';
 import { authServices } from '../../../services/authServices';
-import { showSuccessToast, showErrorToast } from '../../../utils/toastConfig';
+import { showSuccessToast, showErrorToast, showWarningToast } from '../../../utils/simpleToast';
 
 export default function Login() {
   console.log('🔵 Login component mounted');
@@ -16,11 +16,36 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<{[key: string]: string}>({});
+  const [rememberMe, setRememberMe] = useState(false);
   const router = useRouter();
 
   console.log('📝 Login form data:', formData);
   console.log('🔄 Login loading state:', isLoading);
   console.log('❌ Login errors:', errors);
+
+  // Load saved credentials on component mount
+  useEffect(() => {
+    const savedCredentials = localStorage.getItem('rememberedCredentials');
+    if (savedCredentials) {
+      try {
+        const { email, password, timestamp } = JSON.parse(savedCredentials);
+        // Check if credentials are still valid (within 30 days)
+        const thirtyDaysInMs = 30 * 24 * 60 * 60 * 1000;
+        if (Date.now() - timestamp < thirtyDaysInMs) {
+          setFormData({ email, password });
+          setRememberMe(true);
+          console.log('📋 Loaded saved credentials');
+        } else {
+          // Remove expired credentials
+          localStorage.removeItem('rememberedCredentials');
+          console.log('🗑️ Removed expired credentials');
+        }
+      } catch (error) {
+        console.error('Error loading saved credentials:', error);
+        localStorage.removeItem('rememberedCredentials');
+      }
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     console.log('🚀 Login form submitted');
@@ -57,6 +82,22 @@ export default function Login() {
       
       if (response.success) {
         console.log('🎉 Login successful, checking user status');
+        
+        // Handle remember me functionality
+        if (rememberMe) {
+          const credentialsToSave = {
+            email: formData.email,
+            password: formData.password,
+            timestamp: Date.now()
+          };
+          localStorage.setItem('rememberedCredentials', JSON.stringify(credentialsToSave));
+          console.log('💾 Saved credentials for 30 days');
+        } else {
+          // Remove saved credentials if remember me is unchecked
+          localStorage.removeItem('rememberedCredentials');
+          console.log('🗑️ Removed saved credentials');
+        }
+        
         // Check if user is active
         if (response.data?.user?.is_active) {
           console.log('✅ User is active, redirecting to dashboard');
@@ -64,22 +105,52 @@ export default function Login() {
           // Redirect to dashboard
           console.log('🧭 Navigating to /user/dashboard');
           router.push('/user/dashboard');
+          setIsLoading(false);
         } else {
-          console.log('⚠️ User account not activated, redirecting to activation page');
+          console.log('⚠️ User account not activated, redirecting to activation OTP page');
           showErrorToast('Account not activated. Please activate your account first.');
-          // User is not active, redirect to active account page
+          // User is not active, redirect to active account OTP page
           localStorage.setItem('activateAccountEmail', formData.email);
           console.log('💾 Stored activateAccountEmail in localStorage:', formData.email);
-          console.log('🧭 Navigating to /auth/active-account');
-          router.push('/auth/active-account');
+          
+          // Keep loading state active and redirect after delay
+          setTimeout(() => {
+            console.log('🧭 Navigating to /auth/active-account-otp');
+            router.push('/auth/active-account-otp');
+          }, 1500);
+          // Don't set loading to false here - keep it active during redirect
+          return;
         }
       }
     } catch (error: any) {
       console.error('❌ Login error:', error);
-      showErrorToast(error.response?.data?.message || 'Login failed. Please check your credentials.');
+      console.log('🔍 Error response data:', error.response?.data);
+      
+      // Check if the error is due to inactive account
+      if (error.response?.data?.message?.toLowerCase().includes('not active') || 
+          error.response?.data?.message?.toLowerCase().includes('inactive') ||
+          error.response?.data?.message?.toLowerCase().includes('activate')) {
+        console.log('⚠️ Account not active detected in error response');
+        showWarningToast('Account not activated. Please activate your account first.');
+        localStorage.setItem('activateAccountEmail', formData.email);
+        console.log('💾 Stored activateAccountEmail in localStorage:', formData.email);
+        
+        // Keep loading state active and redirect after delay
+        setTimeout(() => {
+          console.log('🧭 Navigating to /auth/active-account-otp');
+          router.push('/auth/active-account-otp');
+        }, 1500);
+        // Don't set loading to false here - keep it active during redirect
+        return;
+      } else {
+        const errorMessage = error.response?.data?.message || 'Login failed. Please check your credentials.';
+        showErrorToast(errorMessage);
+        setIsLoading(false);
+      }
     } finally {
       console.log('🏁 Login form submission completed');
-      setIsLoading(false);
+      // Only set loading to false if we're not redirecting to active-account-otp
+      // (loading will be kept active during redirect)
     }
   };
 
@@ -110,15 +181,18 @@ export default function Login() {
               <input
                 id="email"
                 name="email"
-                type="email"
+                type="text"
                 autoComplete="email"
-                required
+                suppressHydrationWarning
                 className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 placeholder-gray-400 text-gray-900 ${
                   errors.email ? 'border-red-300' : 'border-gray-200'
                 }`}
                 placeholder="Enter your email"
                 value={formData.email}
-                onChange={(e) => setFormData({...formData, email: e.target.value})}
+                onChange={(e) => {
+                  setFormData({...formData, email: e.target.value});
+                  if (errors.email) setErrors({...errors, email: ''});
+                }}
               />
               {errors.email && (
                 <p className="mt-1 text-sm text-red-600">{errors.email}</p>
@@ -142,7 +216,10 @@ export default function Login() {
                   }`}
                   placeholder="Enter your password"
                   value={formData.password}
-                  onChange={(e) => setFormData({...formData, password: e.target.value})}
+                  onChange={(e) => {
+                    setFormData({...formData, password: e.target.value});
+                    if (errors.password) setErrors({...errors, password: ''});
+                  }}
                 />
                 <button
                   type="button"
@@ -167,6 +244,8 @@ export default function Login() {
                   id="remember-me"
                   name="remember-me"
                   type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                 />
                 <label htmlFor="remember-me" className="ml-3 block text-sm text-gray-600">

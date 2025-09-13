@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Icon } from '@iconify/react';
 import { authServices } from '../../../services/authServices';
-import { showSuccessToast, showErrorToast } from '../../../utils/toastConfig';
+import { showSuccessToast, showErrorToast } from '../../../utils/simpleToast';
 
 export default function ForgotPassword() {
   console.log('🔵 ForgotPassword component mounted');
@@ -90,15 +90,18 @@ export default function ForgotPassword() {
               <input
                 id="email"
                 name="email"
-                type="email"
+                type="text"
                 autoComplete="email"
-                required
+                suppressHydrationWarning
                 className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 placeholder-gray-400 text-gray-900 ${
                   emailError ? 'border-red-300' : 'border-gray-200'
                 }`}
                 placeholder="Enter your email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (emailError) setEmailError('');
+                }}
               />
               {emailError && (
                 <p className="mt-1 text-sm text-red-600">{emailError}</p>

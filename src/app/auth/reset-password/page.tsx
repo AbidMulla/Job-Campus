@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Icon } from '@iconify/react';
 import { authServices } from '../../../services/authServices';
+import { showSuccessToast, showErrorToast } from '../../../utils/simpleToast';
 
 export default function ResetPassword() {
   console.log('🔵 ResetPassword component mounted');
@@ -13,8 +14,6 @@ export default function ResetPassword() {
     confirmPassword: ''
   });
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [email, setEmail] = useState('');
@@ -25,8 +24,6 @@ export default function ResetPassword() {
   console.log('📧 ResetPassword email:', email);
   console.log('🔢 ResetPassword OTP:', otp);
   console.log('🔄 ResetPassword loading state:', isLoading);
-  console.log('❌ ResetPassword error:', error);
-  console.log('✅ ResetPassword success:', success);
 
   useEffect(() => {
     console.log('🔍 ResetPassword useEffect: Getting email and OTP from localStorage');
@@ -52,27 +49,28 @@ export default function ResetPassword() {
     console.log('🚀 ResetPassword form submitted');
     e.preventDefault();
     setIsLoading(true);
-    setError('');
-    setSuccess('');
 
     try {
       // Validate form
       console.log('🔍 Validating reset password form data:', formData);
       if (!formData.newPassword || !formData.confirmPassword) {
         console.log('❌ Missing password fields');
-        setError('Please fill in all fields');
+        showErrorToast('Please fill in all fields');
+        setIsLoading(false);
         return;
       }
 
       if (formData.newPassword.length < 6) {
         console.log('❌ Password too short');
-        setError('Password must be at least 6 characters long');
+        showErrorToast('Password must be at least 6 characters long');
+        setIsLoading(false);
         return;
       }
 
       if (formData.newPassword !== formData.confirmPassword) {
         console.log('❌ Passwords do not match');
-        setError('Passwords do not match');
+        showErrorToast('Passwords do not match');
+        setIsLoading(false);
         return;
       }
 
@@ -83,25 +81,24 @@ export default function ResetPassword() {
       
       if (response.success) {
         console.log('🎉 Password reset successfully');
-        setSuccess('Password reset successfully!');
         
         // Clear localStorage
         localStorage.removeItem('forgotPasswordEmail');
         localStorage.removeItem('forgotPasswordOTP');
         console.log('🗑️ Cleared forgotPasswordEmail and forgotPasswordOTP from localStorage');
         
-        // Redirect to login page
-        console.log('⏰ Setting timeout to navigate to login page in 2 seconds');
+        // Show success message and redirect after 2 seconds
+        console.log('⏰ Setting timeout to show success message and navigate in 2 seconds');
         setTimeout(() => {
+          setIsLoading(false);
+          showSuccessToast('Password reset successfully!');
           console.log('🧭 Navigating to /auth/login');
           router.push('/auth/login');
         }, 2000);
       }
     } catch (error: any) {
       console.error('❌ Reset password error:', error);
-      setError(error.response?.data?.message || 'Failed to reset password. Please try again.');
-    } finally {
-      console.log('🏁 ResetPassword form submission completed');
+      showErrorToast(error.response?.data?.message || 'Failed to reset password. Please try again.');
       setIsLoading(false);
     }
   };
@@ -118,13 +115,6 @@ export default function ResetPassword() {
           </div>
 
 
-          {/* Success Message */}
-          {success && (
-            <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
-              <p className="text-sm text-green-600">{success}</p>
-            </div>
-          )}
-
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* New Password Field */}
@@ -139,10 +129,13 @@ export default function ResetPassword() {
                   type={showPassword ? "text" : "password"}
                   autoComplete="new-password"
                   required
+                  suppressHydrationWarning
                   className="w-full px-4 py-2 pr-12 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 placeholder-gray-400 text-gray-900"
                   placeholder="Enter your new password"
                   value={formData.newPassword}
-                  onChange={(e) => setFormData({...formData, newPassword: e.target.value})}
+                  onChange={(e) => {
+                    setFormData({...formData, newPassword: e.target.value});
+                  }}
                 />
                 <button
                   type="button"
@@ -169,10 +162,13 @@ export default function ResetPassword() {
                   type={showConfirmPassword ? "text" : "password"}
                   autoComplete="new-password"
                   required
+                  suppressHydrationWarning
                   className="w-full px-4 py-2 pr-12 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 placeholder-gray-400 text-gray-900"
                   placeholder="Confirm your new password"
                   value={formData.confirmPassword}
-                  onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
+                  onChange={(e) => {
+                    setFormData({...formData, confirmPassword: e.target.value});
+                  }}
                 />
                 <button
                   type="button"

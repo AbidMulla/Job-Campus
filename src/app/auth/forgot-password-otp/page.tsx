@@ -4,12 +4,12 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Icon } from '@iconify/react';
 import { authServices } from '../../../services/authServices';
-import { showSuccessToast, showErrorToast } from '../../../utils/toastConfig';
+import { showSuccessToast, showErrorToast } from '../../../utils/simpleToast';
 
 export default function ForgotPasswordOTP() {
   console.log('🔵 ForgotPasswordOTP component mounted');
   
-  const [otp, setOtp] = useState(['', '', '', '', '', '']);
+  const [otp, setOtp] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isResending, setIsResending] = useState(false);
   const [otpError, setOtpError] = useState('');
@@ -21,7 +21,7 @@ export default function ForgotPasswordOTP() {
   console.log('🔄 ForgotPasswordOTP loading state:', isLoading);
   console.log('🔄 ForgotPasswordOTP resending state:', isResending);
   console.log('❌ ForgotPasswordOTP OTP error:', otpError);
-
+  
   useEffect(() => {
     console.log('🔍 ForgotPasswordOTP useEffect: Getting email from localStorage');
     // Get email from localStorage
@@ -36,20 +36,16 @@ export default function ForgotPasswordOTP() {
     setEmail(forgotPasswordEmail);
   }, [router]);
 
-  const handleOtpChange = (index: number, value: string) => {
-    console.log(`🔢 ForgotPasswordOTP OTP change at index ${index}:`, value);
-    if (value.length <= 1) {
-      const newOtp = [...otp];
-      newOtp[index] = value;
-      setOtp(newOtp);
-      console.log('📝 Updated OTP array:', newOtp);
-      
-      // Auto-focus next input
-      if (value && index < 5) {
-        console.log(`🎯 Auto-focusing next input at index ${index + 1}`);
-        const nextInput = document.getElementById(`otp-${index + 1}`);
-        nextInput?.focus();
-      }
+  const handleOtpChange = (value: string) => {
+    console.log('🔢 ForgotPasswordOTP OTP change:', value);
+    // Only allow digits and limit to 6 characters
+    const numericValue = value.replace(/\D/g, '').slice(0, 6);
+    setOtp(numericValue);
+    console.log('📝 Updated OTP:', numericValue);
+    
+    // Clear error when user starts typing
+    if (otpError) {
+      setOtpError('');
     }
   };
 
@@ -80,9 +76,8 @@ export default function ForgotPasswordOTP() {
     setIsLoading(true);
     setOtpError('');
 
-    const otpString = otp.join('');
-    console.log('🔢 ForgotPasswordOTP OTP string:', otpString);
-    if (otpString.length !== 6) {
+    console.log('🔢 ForgotPasswordOTP OTP string:', otp);
+    if (otp.length !== 6) {
       console.log('❌ Incomplete OTP entered');
       setOtpError('Please enter the complete 6-digit OTP');
       setIsLoading(false);
@@ -91,29 +86,28 @@ export default function ForgotPasswordOTP() {
 
     try {
       console.log('📤 Sending OTP verification request to API');
-      const response = await authServices.forgotPasswordOTP(email, otpString);
+      const response = await authServices.forgotPasswordOTP(email, otp);
       console.log('✅ ForgotPasswordOTP verification API response:', response);
       
       if (response.success) {
         console.log('🎉 ForgotPasswordOTP verified successfully');
-        showSuccessToast('OTP verified successfully!');
         
         // Store OTP for reset password page
-        localStorage.setItem('forgotPasswordOTP', otpString);
-        console.log('💾 Stored forgotPasswordOTP in localStorage:', otpString);
+        localStorage.setItem('forgotPasswordOTP', otp);
+        console.log('💾 Stored forgotPasswordOTP in localStorage:', otp);
         
-        // Navigate to reset password page
-        console.log('⏰ Setting timeout to navigate to reset password page in 1.5 seconds');
+        // Show success message and navigate after 2 seconds
+        console.log('⏰ Setting timeout to show success message and navigate in 2 seconds');
         setTimeout(() => {
+          setIsLoading(false);
+          showSuccessToast('OTP verified successfully!');
           console.log('🧭 Navigating to /auth/reset-password');
           router.push('/auth/reset-password');
-        }, 1500);
+        }, 2000);
       }
     } catch (error: any) {
       console.error('❌ OTP verification error:', error);
       showErrorToast(error.response?.data?.message || 'Invalid OTP. Please try again.');
-    } finally {
-      console.log('🏁 ForgotPasswordOTP form submission completed');
       setIsLoading(false);
     }
   };
@@ -133,24 +127,22 @@ export default function ForgotPasswordOTP() {
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* OTP Input */}
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-4 text-center">
+              <label htmlFor="otp" className="block text-sm font-semibold text-gray-700 mb-2 text-center">
                 Enter the 6-digit code
               </label>
-              <div className="flex justify-center space-x-3">
-                {otp.map((digit, index) => (
-                  <input
-                    key={index}
-                    id={`otp-${index}`}
-                    type="text"
-                    maxLength={1}
-                    className={`w-12 h-12 text-center border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg font-semibold transition-all duration-200 placeholder-gray-400 text-gray-900 ${
-                      otpError ? 'border-red-300' : 'border-gray-200'
-                    }`}
-                    value={digit}
-                    onChange={(e) => handleOtpChange(index, e.target.value)}
-                  />
-                ))}
-              </div>
+              <input
+                id="otp"
+                name="otp"
+                type="text"
+                maxLength={6}
+                suppressHydrationWarning
+                className={`w-full px-4 py-3 text-center border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg font-semibold transition-all duration-200 placeholder-gray-400 text-gray-900 tracking-widest ${
+                  otpError ? 'border-red-300' : 'border-gray-200'
+                }`}
+                placeholder="000000"
+                value={otp}
+                onChange={(e) => handleOtpChange(e.target.value)}
+              />
               {otpError && (
                 <p className="mt-2 text-sm text-red-600 text-center">{otpError}</p>
               )}

@@ -19,7 +19,7 @@ interface AuthResponse {
   error?: string;
 }
 
-interface RegisterData {
+interface RegisterData extends Record<string, unknown> {
   name: string;
   email: string;
   mobile_no?: string;
@@ -68,6 +68,17 @@ export const authServices = {
       return response;
     } catch (error) {
       console.error('Activate account error:', error);
+      throw error;
+    }
+  },
+
+  // Verify activate account OTP
+  activateAccountOTP: async (email: string, otp: string): Promise<AuthResponse> => {
+    try {
+      const response = await ApiController.post<AuthResponse>('/auth/activate-account-otp', { email, otp }, ApiController.publicConfig);
+      return response;
+    } catch (error) {
+      console.error('Activate account OTP verification error:', error);
       throw error;
     }
   },

@@ -49,61 +49,64 @@ axiosInstance.interceptors.response.use(
         console.warn('Unauthorized:', response.data);
         localStorage.removeItem('token');
         localStorage.removeItem('user');
-        window.location.href = '/login';
+        // Only redirect to login if we're not already on the login page
+        if (!window.location.pathname.includes('/auth/login')) {
+          window.location.href = '/auth/login';
+        }
         break;
 
       case 403:
         console.warn('Forbidden:', response.data);
-        alert('You do not have permission to perform this action.');
+        // alert('You do not have permission to perform this action.');
         break;
 
       case 404:
         console.warn('Not Found:', response.data);
-        alert(response.data?.message || 'Requested resource not found.');
+        //  alert(response.data?.message || 'Requested resource not found.');
         break;
 
       case 409:
         console.warn('Conflict Error:', response.data);
-        alert(response.data?.message || 'Resource conflict. Please try again.');
+        // alert(response.data?.message || 'Resource conflict. Please try again.');
         break;
 
       case 422:
         console.warn('Unprocessable Entity:', response.data);
-        alert(response.data?.message || 'Invalid data provided.');
+        // alert(response.data?.message || 'Invalid data provided.');
         break;
 
       case 429:
         console.warn('Too Many Requests:', response.data);
-        alert('Too many requests. Please wait a moment and try again.');
+        // alert('Too many requests. Please wait a moment and try again.');
         break;
 
       case 500:
         console.error('Internal Server Error:', response.data);
-        alert('Server error occurred. Please try again later.');
+        // alert('Server error occurred. Please try again later.');
         break;
 
       case 502:
         console.error('Bad Gateway:', response.data);
-        alert('Service temporarily unavailable. Please try again later.');
+        // alert('Service temporarily unavailable. Please try again later.');
         break;
 
       case 503:
         console.error('Service Unavailable:', response.data);
-        alert('Service is currently unavailable. Please try again later.');
+        // alert('Service is currently unavailable. Please try again later.');
         break;
 
       case 504:
         console.error('Gateway Timeout:', response.data);
-        alert('Request timeout. Please try again later.');
+        // alert('Request timeout. Please try again later.');
         break;
 
       default:
         if (status >= 500) {
           console.error(`Server Error (${status}):`, response.data);
-          alert('Server error occurred. Please try again later.');
+          // alert('Server error occurred. Please try again later.');
         } else {
           console.warn(`Unexpected Error (${status}):`, response.data);
-          alert(response.data?.message || 'An unexpected error occurred.');
+          // alert(response.data?.message || 'An unexpected error occurred.');
         }
         break;
     }

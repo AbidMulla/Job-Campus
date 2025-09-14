@@ -1,8 +1,11 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Icon } from '@iconify/react';
 import Link from 'next/link';
 import BreadCrumbs from '@/components/admin/BreadCrumbs';
+import { adminServices } from '@/services/adminServices';
+import { showDeleteConfirm } from '@/utils/confirmModal';
+import { showSuccessToast, showErrorToast } from '@/utils/simpleToast';
 
 export default function JobManagement() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -11,10 +14,52 @@ export default function JobManagement() {
   const [selectedJobType, setSelectedJobType] = useState('all');
   const [selectedLocation, setSelectedLocation] = useState('all');
   const [selectedEmploymentType, setSelectedEmploymentType] = useState('all');
-  const [selectedJobs, setSelectedJobs] = useState<number[]>([]);
+  const [selectedJobs, setSelectedJobs] = useState<string[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [recordsPerPage, setRecordsPerPage] = useState(10);
+  const [jobs, setJobs] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [totalJobs, setTotalJobs] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
 
-  // Mock job data
-  const jobs = [
+  // Fetch jobs from API
+  const fetchJobs = async () => {
+    try {
+      setLoading(true);
+      const params = {
+        page: currentPage,
+        limit: recordsPerPage,
+        search: searchTerm || undefined,
+        status: selectedStatus !== 'all' ? selectedStatus : undefined,
+        job_type: selectedJobType !== 'all' ? selectedJobType : undefined,
+        location: selectedLocation !== 'all' ? selectedLocation : undefined,
+        employment_type: selectedEmploymentType !== 'all' ? selectedEmploymentType : undefined,
+      };
+
+      const response = await adminServices.getJobs(params);
+      
+      if (response.success) {
+        setJobs(response.data || []);
+        setTotalJobs(response.pagination?.total || 0);
+        setTotalPages(response.pagination?.pages || 0);
+      }
+    } catch (error) {
+      console.error('Error fetching jobs:', error);
+      setJobs([]);
+      setTotalJobs(0);
+      setTotalPages(0);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Effect to fetch jobs on component mount and when filters change
+  useEffect(() => {
+    fetchJobs();
+  }, [currentPage, recordsPerPage, searchTerm, selectedStatus, selectedJobType, selectedLocation, selectedEmploymentType]);
+
+  // Mock job data for fallback
+  const mockJobs = [
     {
       id: 1,
       title: 'Frontend Developer',
@@ -317,17 +362,62 @@ export default function JobManagement() {
     }
   ];
 
-  const filteredJobs = jobs.filter(job => {
-    const matchesSearch = job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         job.company.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = selectedStatus === 'all' || job.status === selectedStatus;
-    const matchesCategory = selectedCategory === 'all' || job.category === selectedCategory;
-    const matchesJobType = selectedJobType === 'all' || job.jobType === selectedJobType;
-    const matchesLocation = selectedLocation === 'all' || job.location === selectedLocation;
-    const matchesEmploymentType = selectedEmploymentType === 'all' || job.employmentType === selectedEmploymentType;
-    
-    return matchesSearch && matchesStatus && matchesCategory && matchesJobType && matchesLocation && matchesEmploymentType;
-  });
+  // Since filtering is done on the server side, we use jobs directly
+  const filteredJobs = jobs;
+  const currentJobs = jobs;
+  const startIndex = (currentPage - 1) * recordsPerPage;
+  const endIndex = Math.min(startIndex + recordsPerPage, totalJobs);
+
+  // Debounce search input
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setCurrentPage(1); // Reset to first page when search changes
+    }, 300); // 300ms debounce
+
+    return () => clearTimeout(timeoutId);
+  }, [searchTerm]);
+
+  // Reset to first page when filters change
+  const handleFilterChange = () => {
+    setCurrentPage(1);
+  };
+
+  // Handle page change
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  // Handle records per page change
+  const handleRecordsPerPageChange = (value: number) => {
+    setRecordsPerPage(value);
+    setCurrentPage(1);
+  };
+
+  // Handle delete job
+  const handleDeleteJob = async (jobId: string, jobTitle: string) => {
+    try {
+      // Show confirmation modal
+      const confirmed = await showDeleteConfirm(jobTitle);
+      
+      if (!confirmed) {
+        return; // User cancelled
+      }
+
+      // Call delete API
+      const response = await adminServices.deleteJob(jobId);
+      
+      if (response.success) {
+        showSuccessToast('Job deleted successfully');
+        // Refresh the jobs list
+        fetchJobs();
+      } else {
+        showErrorToast('Failed to delete job');
+      }
+    } catch (error) {
+      console.error('Error deleting job:', error);
+      showErrorToast('An error occurred while deleting the job');
+    }
+  };
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {
@@ -395,7 +485,16 @@ export default function JobManagement() {
   };
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2 relative">
+      {/* Full Screen Loader */}
+      {loading && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-8 flex flex-col items-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
+            <p className="text-gray-600 font-medium">Loading jobs...</p>
+          </div>
+        </div>
+      )}
       {/* BreadCrumbs */}
       <BreadCrumbs 
         title="Job Management" 
@@ -462,7 +561,7 @@ export default function JobManagement() {
 
       {/* Filters and Search */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex items-center gap-3">
           {/* Job Search */}
           <div className="relative w-48">
             <Icon icon="fluent:briefcase-24-regular" className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -470,7 +569,9 @@ export default function JobManagement() {
               type="text"
               placeholder="Search by job..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+              }}
               className="w-full pl-9 pr-3 py-2 text-sm text-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-500"
             />
           </div>
@@ -479,10 +580,13 @@ export default function JobManagement() {
           <div className="relative">
             <select
               value={selectedJobType}
-              onChange={(e) => setSelectedJobType(e.target.value)}
+                onChange={(e) => {
+                  setSelectedJobType(e.target.value);
+                  handleFilterChange();
+                }}
               className="w-40 pl-3 pr-8 py-2 text-sm text-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none cursor-pointer"
             >
-              <option value="all">All Jobs Title</option>
+                <option value="all">All Job Type</option>
               <option value="IT">IT</option>
               <option value="Non-IT">Non-IT</option>
               <option value="Banking">Banking</option>
@@ -490,9 +594,6 @@ export default function JobManagement() {
               <option value="Finance">Finance</option>
               <option value="Healthcare">Healthcare</option>
               <option value="Education">Education</option>
-              <option value="Full-time">Full-time</option>
-              <option value="Part-time">Part-time</option>
-              <option value="Work from Home">Work from Home</option>
             </select>
             <Icon icon="fluent:chevron-down-24-regular" className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
           </div>
@@ -501,7 +602,10 @@ export default function JobManagement() {
           <div className="relative">
             <select
               value={selectedLocation}
-              onChange={(e) => setSelectedLocation(e.target.value)}
+                onChange={(e) => {
+                  setSelectedLocation(e.target.value);
+                  handleFilterChange();
+                }}
               className="w-40 pl-3 pr-8 py-2 text-sm text-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none cursor-pointer"
             >
               <option value="all">All Locations</option>
@@ -519,10 +623,13 @@ export default function JobManagement() {
           <div className="relative">
             <select
               value={selectedEmploymentType}
-              onChange={(e) => setSelectedEmploymentType(e.target.value)}
-              className="w-36 pl-3 pr-8 py-2 text-sm text-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none cursor-pointer"
-            >
-              <option value="all">All Job Type</option>
+                onChange={(e) => {
+                  setSelectedEmploymentType(e.target.value);
+                  handleFilterChange();
+                }}
+                className="w-48 pl-3 pr-8 py-2 text-sm text-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none cursor-pointer"
+              >
+                <option value="all">All Employment Type</option>
               <option value="Full-time">Full-time</option>
               <option value="Part-time">Part-time</option>
               <option value="Work from Home">Work from Home</option>
@@ -534,7 +641,10 @@ export default function JobManagement() {
           <div className="relative">
             <select
               value={selectedStatus}
-              onChange={(e) => setSelectedStatus(e.target.value)}
+                onChange={(e) => {
+                  setSelectedStatus(e.target.value);
+                  handleFilterChange();
+                }}
               className="w-32 pl-3 pr-8 py-2 text-sm text-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none cursor-pointer"
             >
               <option value="all">All Status</option>
@@ -544,18 +654,90 @@ export default function JobManagement() {
             <Icon icon="fluent:chevron-down-24-regular" className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
           </div>
 
+            {/* Records Per Page Selector */}
+            <div className="relative">
+              <select
+                value={recordsPerPage}
+                onChange={(e) => handleRecordsPerPageChange(Number(e.target.value))}
+                className="w-24 pl-3 pr-8 py-2 text-sm text-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none cursor-pointer"
+              >
+                <option value={5}>5</option>
+                <option value={10}>10</option>
+                <option value={25}>25</option>
+                <option value={50}>50</option>
+                <option value={100}>100</option>
+              </select>
+              <Icon icon="fluent:chevron-down-24-regular" className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
+            </div>
+
           {/* Add New Job Button */}
-          <Link href="/admin/job-management/add-job" className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
-            <Icon icon="fluent:add-24-regular" className="w-4 h-4" />
-            Add New Job
-          </Link>
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <div className="flex items-center gap-2 ml-auto mr-3">
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Previous
+              </button>
+
+              <div className="flex items-center gap-1">
+                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                  let pageNum;
+                  if (totalPages <= 5) {
+                    pageNum = i + 1;
+                  } else if (currentPage <= 3) {
+                    pageNum = i + 1;
+                  } else if (currentPage >= totalPages - 2) {
+                    pageNum = totalPages - 4 + i;
+                  } else {
+                    pageNum = currentPage - 2 + i;
+                  }
+
+                  return (
+                    <button
+                      key={pageNum}
+                      onClick={() => handlePageChange(pageNum)}
+                      className={`min-w-[40px] px-4 py-2 text-sm font-medium rounded-lg ${
+                        currentPage === pageNum
+                          ? 'bg-blue-600 text-white border border-blue-600'
+                          : 'text-gray-700 bg-white border border-gray-300 hover:bg-gray-50'
+                      }`}
+                    >
+                      {pageNum}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Next
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
       {/* Jobs Table */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900">Jobs ({filteredJobs.length})</h3>
+          <div className="flex justify-between items-center">
+            <h3 className="text-lg font-semibold text-gray-900">Jobs ({totalJobs})</h3>
+            <div className="flex items-center gap-4">
+              <div className="text-sm text-gray-500">
+                Showing {startIndex + 1} to {endIndex} of {totalJobs} entries
+              </div>
+              <Link href="/admin/job-management/add-job" className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
+                <Icon icon="fluent:add-24-regular" className="w-4 h-4" />
+                Add New Job
+              </Link>
+            </div>
+          </div>
         </div>
         
         <div className="overflow-x-auto">
@@ -565,10 +747,10 @@ export default function JobManagement() {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   <input
                     type="checkbox"
-                    checked={filteredJobs.length > 0 && filteredJobs.every(job => selectedJobs.includes(job.id))}
+                    checked={currentJobs.length > 0 && currentJobs.every(job => selectedJobs.includes(job._id))}
                     onChange={(e) => {
                       if (e.target.checked) {
-                        setSelectedJobs(filteredJobs.map(job => job.id));
+                        setSelectedJobs(currentJobs.map(job => job._id));
                       } else {
                         setSelectedJobs([]);
                       }
@@ -576,7 +758,6 @@ export default function JobManagement() {
                     className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                   />
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Job Title</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Job Type</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No of Views</th>
@@ -587,19 +768,17 @@ export default function JobManagement() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredJobs.map((job, index) => (
+              {currentJobs.map((job, index) => (
                 <tr 
-                  key={job.id} 
+                  key={job._id} 
                   className="hover:bg-gray-50 cursor-pointer group"
-                  onClick={() => window.location.href = `/admin/job-details?id=${job.id}`}
+                  onClick={() => window.location.href = `/admin/job-details?id=${job._id}`}
                 >
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {index + 1}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900 group-hover:text-blue-600">
-                      {job.title}
-                    </div>
+                    {getJobTypeBadge(job.job_type)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     <div className="flex items-center space-x-2">
@@ -607,34 +786,50 @@ export default function JobManagement() {
                       <span>{job.location}</span>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {getJobTypeBadge(job.jobType)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {getStatusBadge(job.status)}
-                  </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     <div className="flex items-center space-x-2">
-                      <span className="text-blue-600 font-medium">{job.views}</span>
+                      <span className="text-blue-600 font-medium">{job.views || 0}</span>
                       <Icon icon="fluent:eye-24-regular" className="w-4 h-4 text-gray-400" />
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {new Date(job.expireDate).toLocaleDateString('en-US', {
+                    {job.job_post_date ? new Date(job.job_post_date).toLocaleDateString('en-US', {
                       year: 'numeric',
                       month: '2-digit',
                       day: '2-digit'
-                    })}
+                    }) : '-'}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {job.job_expire_date ? new Date(job.job_expire_date).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: '2-digit',
+                      day: '2-digit'
+                    }) : '-'}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {getStatusBadge(job.status)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex space-x-2" onClick={(e) => e.stopPropagation()}>
-                      <button className="p-1 border border-gray-300 rounded-md text-blue-600 hover:text-blue-900 hover:bg-blue-50 hover:border-blue-400 transition-colors">
+                      <button 
+                        onClick={() => window.location.href = `/admin/job-management/edit-job?id=${job._id}`}
+                        className="p-1 border border-gray-300 rounded-md text-blue-600 hover:text-blue-900 hover:bg-blue-50 hover:border-blue-400 transition-colors"
+                        title="Edit Job"
+                      >
                         <Icon icon="fluent:edit-24-regular" className="w-4 h-4" />
                       </button>
-                      <button className="p-1 border border-gray-300 rounded-md text-green-600 hover:text-green-900 hover:bg-green-50 hover:border-green-400 transition-colors">
+                      <button 
+                        onClick={() => window.location.href = `/admin/job-details?id=${job._id}`}
+                        className="p-1 border border-gray-300 rounded-md text-green-600 hover:text-green-900 hover:bg-green-50 hover:border-green-400 transition-colors"
+                        title="View Job Details"
+                      >
                         <Icon icon="fluent:eye-24-regular" className="w-4 h-4" />
                       </button>
-                      <button className="p-1 border border-gray-300 rounded-md text-red-600 hover:text-red-900 hover:bg-red-50 hover:border-red-400 transition-colors">
+                      <button 
+                        onClick={() => handleDeleteJob(job._id, job.job_title)}
+                        className="p-1 border border-gray-300 rounded-md text-red-600 hover:text-red-900 hover:bg-red-50 hover:border-red-400 transition-colors"
+                        title="Delete Job"
+                      >
                         <Icon icon="fluent:delete-24-regular" className="w-4 h-4" />
                       </button>
                     </div>
@@ -645,6 +840,7 @@ export default function JobManagement() {
           </table>
         </div>
       </div>
+
     </div>
   );
 }

@@ -14,40 +14,6 @@ export default function Home() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('it');
 
-  // Load external script and inject ads
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.innerHTML = `
-      (function(gsiz){
-        var d = document,
-            s = d.createElement('script'),
-            l = d.scripts[d.scripts.length - 1];
-        s.settings = gsiz || {};
-        s.src = "//fancyresponse.com/b.XNV/s-dbGCly0AYvWWcw/teImA9/u/ZaUal_kRP/TiY/2zNADyci1gOVT/EEtcNKj/Yw0mN/zLU/5UM/gy";
-        s.async = true;
-        s.referrerPolicy = 'no-referrer-when-downgrade';
-        l.parentNode.insertBefore(s, l);
-      })({})
-    `;
-    document.head.appendChild(script);
-
-    // Wait for the script to load and then inject ads into the container
-    setTimeout(() => {
-      const adContainer = document.getElementById('ad-container-below-jobs');
-      if (adContainer) {
-        // Clear the placeholder text
-        adContainer.innerHTML = '';
-        // The external script should populate this container with ads
-      }
-    }, 1000);
-
-    // Cleanup function
-    return () => {
-      if (script.parentNode) {
-        script.parentNode.removeChild(script);
-      }
-    };
-  }, []);
 
 
   const handleMenuToggle = () => {
@@ -310,14 +276,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Ad Section */}
-          <div className="bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-gray-200 text-center">
-            <div className="max-w-4xl mx-auto">
-              <div id="ad-container-below-jobs" className="min-h-[250px] flex items-center justify-center bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
-                <p className="text-gray-500 text-sm">Advertisement Space</p>
-              </div>
-            </div>
-          </div>
 
           {/* Stats Section */}
           <div className="bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-gray-200">

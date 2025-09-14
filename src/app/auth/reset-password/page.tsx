@@ -18,7 +18,33 @@ export default function ResetPassword() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
+  const [errors, setErrors] = useState<{[key: string]: string}>({});
   const router = useRouter();
+
+  // Password validation function
+  const validatePassword = (password: string): string | null => {
+    if (!password) {
+      return 'Password is required';
+    }
+    
+    if (password.length < 8 || password.length > 12) {
+      return 'Password must be between 8 and 12 characters';
+    }
+    
+    if (!/[a-zA-Z]/.test(password)) {
+      return 'Password must contain at least one letter';
+    }
+    
+    if (!/[0-9]/.test(password)) {
+      return 'Password must contain at least one number';
+    }
+    
+    if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+      return 'Password must contain at least one special character';
+    }
+    
+    return null;
+  };
 
   console.log('📝 ResetPassword form data:', formData);
   console.log('📧 ResetPassword email:', email);
@@ -53,23 +79,22 @@ export default function ResetPassword() {
     try {
       // Validate form
       console.log('🔍 Validating reset password form data:', formData);
-      if (!formData.newPassword || !formData.confirmPassword) {
-        console.log('❌ Missing password fields');
-        showErrorToast('Please fill in all fields');
-        setIsLoading(false);
-        return;
+      const newErrors: {[key: string]: string} = {};
+      
+      const passwordError = validatePassword(formData.newPassword);
+      if (passwordError) {
+        newErrors.newPassword = passwordError;
       }
 
-      if (formData.newPassword.length < 6) {
-        console.log('❌ Password too short');
-        showErrorToast('Password must be at least 6 characters long');
-        setIsLoading(false);
-        return;
+      if (!formData.confirmPassword) {
+        newErrors.confirmPassword = 'Please confirm your password';
+      } else if (formData.newPassword !== formData.confirmPassword) {
+        newErrors.confirmPassword = 'Passwords do not match';
       }
 
-      if (formData.newPassword !== formData.confirmPassword) {
-        console.log('❌ Passwords do not match');
-        showErrorToast('Passwords do not match');
+      if (Object.keys(newErrors).length > 0) {
+        console.log('❌ Reset password validation errors:', newErrors);
+        setErrors(newErrors);
         setIsLoading(false);
         return;
       }
@@ -128,13 +153,15 @@ export default function ResetPassword() {
                   name="newPassword"
                   type={showPassword ? "text" : "password"}
                   autoComplete="new-password"
-                  required
                   suppressHydrationWarning
-                  className="w-full px-4 py-2 pr-12 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 placeholder-gray-400 text-gray-900"
+                  className={`w-full px-4 py-2 pr-12 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 placeholder-gray-400 text-gray-900 ${
+                    errors.newPassword ? 'border-red-300' : 'border-gray-200'
+                  }`}
                   placeholder="Enter your new password"
                   value={formData.newPassword}
                   onChange={(e) => {
                     setFormData({...formData, newPassword: e.target.value});
+                    if (errors.newPassword) setErrors({...errors, newPassword: ''});
                   }}
                 />
                 <button
@@ -147,6 +174,16 @@ export default function ResetPassword() {
                     className="w-5 h-5" 
                   />
                 </button>
+              </div>
+              {errors.newPassword && (
+                <p className="mt-1 text-sm text-red-600">{errors.newPassword}</p>
+              )}
+              <div className="mt-2 flex items-center justify-between text-xs text-gray-500">
+                <div className="flex items-center">
+                  <Icon icon="mdi:information-outline" className="w-4 h-4 mr-1" />
+                  <span>8-12 characters, at least one letter, number, and special character</span>
+                </div>
+              
               </div>
             </div>
 
@@ -161,13 +198,15 @@ export default function ResetPassword() {
                   name="confirmPassword"
                   type={showConfirmPassword ? "text" : "password"}
                   autoComplete="new-password"
-                  required
                   suppressHydrationWarning
-                  className="w-full px-4 py-2 pr-12 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 placeholder-gray-400 text-gray-900"
+                  className={`w-full px-4 py-2 pr-12 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 placeholder-gray-400 text-gray-900 ${
+                    errors.confirmPassword ? 'border-red-300' : 'border-gray-200'
+                  }`}
                   placeholder="Confirm your new password"
                   value={formData.confirmPassword}
                   onChange={(e) => {
                     setFormData({...formData, confirmPassword: e.target.value});
+                    if (errors.confirmPassword) setErrors({...errors, confirmPassword: ''});
                   }}
                 />
                 <button
@@ -181,6 +220,9 @@ export default function ResetPassword() {
                   />
                 </button>
               </div>
+              {errors.confirmPassword && (
+                <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>
+              )}
             </div>
 
             {/* Submit Button */}

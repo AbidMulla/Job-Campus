@@ -53,6 +53,10 @@ export default function Login() {
     setIsLoading(true);
     setErrors({});
 
+    // Record start time for minimum loader duration
+    const startTime = Date.now();
+    const minLoaderDuration = 2000; // 2 seconds
+
     // Validate form
     const newErrors: {[key: string]: string} = {};
     console.log('🔍 Validating login form data:', formData);
@@ -100,12 +104,32 @@ export default function Login() {
         
         // Check if user is active
         if (response.data?.user?.is_active) {
-          console.log('✅ User is active, redirecting to dashboard');
+          console.log('✅ User is active, checking role for redirection');
           showSuccessToast('Login successful! Welcome back!');
-          // Redirect to dashboard
-          console.log('🧭 Navigating to /user/dashboard');
-          router.push('/user/dashboard');
-          setIsLoading(false);
+          
+          // Get user role ID for redirection
+          const userRoleId = response.data?.user?.role?.id;
+          console.log('User role ID:', userRoleId);
+          
+          // Determine redirect path based on role ID
+          let redirectPath = '/user/dashboard'; // Default to user dashboard
+          
+          if (userRoleId === '68c4791467ba6a539f12d2aa') {
+            redirectPath = '/admin/dashboard';
+            console.log('🧭 Admin role detected, redirecting to admin dashboard');
+          } else {
+            console.log('🧭 User role detected, redirecting to user dashboard');
+          }
+          
+          // Ensure minimum loader duration before redirect
+          const elapsedTime = Date.now() - startTime;
+          const remainingTime = Math.max(0, minLoaderDuration - elapsedTime);
+          
+          setTimeout(() => {
+            console.log('🧭 Navigating to:', redirectPath);
+            router.push(redirectPath);
+            setIsLoading(false);
+          }, remainingTime);
         } else {
           console.log('⚠️ User account not activated, redirecting to activation OTP page');
           showErrorToast('Account not activated. Please activate your account first.');
@@ -113,11 +137,14 @@ export default function Login() {
           localStorage.setItem('activateAccountEmail', formData.email);
           console.log('💾 Stored activateAccountEmail in localStorage:', formData.email);
           
-          // Keep loading state active and redirect after delay
+          // Ensure minimum loader duration before redirect
+          const elapsedTime = Date.now() - startTime;
+          const remainingTime = Math.max(0, minLoaderDuration - elapsedTime);
+          
           setTimeout(() => {
             console.log('🧭 Navigating to /auth/active-account-otp');
             router.push('/auth/active-account-otp');
-          }, 1500);
+          }, remainingTime);
           // Don't set loading to false here - keep it active during redirect
           return;
         }
@@ -135,17 +162,27 @@ export default function Login() {
         localStorage.setItem('activateAccountEmail', formData.email);
         console.log('💾 Stored activateAccountEmail in localStorage:', formData.email);
         
-        // Keep loading state active and redirect after delay
+        // Ensure minimum loader duration before redirect
+        const elapsedTime = Date.now() - startTime;
+        const remainingTime = Math.max(0, minLoaderDuration - elapsedTime);
+        
         setTimeout(() => {
           console.log('🧭 Navigating to /auth/active-account-otp');
           router.push('/auth/active-account-otp');
-        }, 1500);
+        }, remainingTime);
         // Don't set loading to false here - keep it active during redirect
         return;
       } else {
         const errorMessage = error.response?.data?.message || 'Login failed. Please check your credentials.';
         showErrorToast(errorMessage);
-        setIsLoading(false);
+        
+        // Ensure minimum loader duration even for errors
+        const elapsedTime = Date.now() - startTime;
+        const remainingTime = Math.max(0, minLoaderDuration - elapsedTime);
+        
+        setTimeout(() => {
+          setIsLoading(false);
+        }, remainingTime);
       }
     } finally {
       console.log('🏁 Login form submission completed');

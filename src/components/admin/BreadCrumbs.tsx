@@ -45,25 +45,22 @@ export default function BreadCrumbs({ title, breadcrumbs, showBackButton = false
             className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
             aria-label="Go back"
           >
-            <Icon icon="mdi:arrow-left" className="w-5 h-5" />
+            <Icon icon="heroicons:arrow-left" className="w-5 h-5" />
           </Link>
         )}
         <h1 className="text-2xl font-bold text-gray-900">{title}</h1>
       </div>
 
       {/* Right side - Breadcrumbs */}
-      <nav className="flex items-center space-x-2 text-sm text-gray-500">
+      <nav className="hidden md:flex items-center space-x-2 text-sm text-gray-500">
         {breadcrumbs.map((breadcrumb, index) => (
           <div key={index} className="flex items-center space-x-2">
             {index > 0 && <Icon icon="mdi:chevron-right" className="w-4 h-4 text-gray-400" />}
             {breadcrumb.href ? (
-              <Link 
-                href={breadcrumb.href} 
-                className="hover:text-blue-600 transition-colors flex items-center gap-2"
-              >
-                {breadcrumb.icon && <Icon icon={breadcrumb.icon} className="w-5 h-5 text-blue-500" />}
+              <span className="text-gray-500 flex items-center gap-2">
+                {breadcrumb.icon && <Icon icon={breadcrumb.icon} className="w-5 h-5 text-gray-500" />}
                 {breadcrumb.label}
-              </Link>
+              </span>
             ) : (
               <span className="text-gray-900 font-medium flex items-center gap-2">
                 {breadcrumb.icon && <Icon icon={breadcrumb.icon} className="w-5 h-5 text-gray-600" />}

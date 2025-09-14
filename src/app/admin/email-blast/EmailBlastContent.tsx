@@ -35,7 +35,7 @@ export default function EmailBlastContent() {
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
-      alert('Email blast sent successfully!');
+      // alert('Email blast sent successfully!');
     }, 2000);
   };
 

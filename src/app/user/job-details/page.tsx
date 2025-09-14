@@ -1,3 +1,35 @@
+// SEO Metadata
+export const metadata = {
+  title: "TCS iON NQT National Qualifier Test For Fresher | Job Details",
+  description: "Apply now for TCS iON NQT National Qualifier Test for freshers. Explore job details, eligibility, skills required, and how to apply.",
+  keywords: [
+    "TCS iON NQT",
+    "TCS jobs 2025",
+    "Tata Consultancy Services careers",
+    "Software Engineer fresher jobs",
+    "Off campus drive",
+    "IT jobs in Hyderabad",
+    "Capgemini jobs",
+    "Entry level software jobs",
+  ],
+  openGraph: {
+    title: "TCS iON NQT National Qualifier Test For Fresher | Job Details",
+    description: "Apply now for TCS iON NQT National Qualifier Test for freshers. Explore job details, eligibility, skills required, and how to apply.",
+    url: "https://yourwebsite.com/job-details/tcs-ion-nqt",
+    siteName: "Your Career Portal",
+    images: [
+      {
+        url: "/tcs-ion-banner.png",
+        width: 1200,
+        height: 630,
+        alt: "TCS iON NQT Job",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+};
+
 'use client';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -143,7 +175,7 @@ export default function JobDetailsPage() {
                     </div>
 
                     {/* Role and Responsibility Section */}
-                    <div className="mb-8">
+                      <div className="mb-8">
                         <h2 className="text-2xl font-bold text-gray-900 mb-2">Role and Responsibility</h2>
                         <div className="bg-white rounded-xl p-2 border border-gray-200 ">
                             <ul className="space-y-3 text-gray-700 leading-relaxed">
@@ -170,9 +202,9 @@ export default function JobDetailsPage() {
                                 <li className="flex items-start">
                                     <span className="text-blue-600 mr-2">•</span>
                                     The software engineer collaborates and acts as team player with other software engineers and stakeholders.
-                                </li>
-                            </ul>
-                        </div>
+                                  </li>
+                              </ul>
+                            </div>
                     </div>
 
                     {/* Education and Skills Section */}
@@ -218,23 +250,23 @@ export default function JobDetailsPage() {
                                 </li>
                             </ul>
                         </div>
-                    </div>
+                      </div>
 
                     {/* How To Apply Razorpay Section */}
-                    <div className="mb-8">
+                      <div className="mb-8">
                         <h2 className="text-2xl font-bold text-gray-900 mb-2">How To Apply Razorpay Off Campus Drive ??</h2>
                         <div className="bg-white rounded-xl p-2 border border-gray-200 ">
-                            <p className="text-gray-700 leading-relaxed mb-4">
+                          <p className="text-gray-700 leading-relaxed mb-4">
                                 All interested and eligible candidates can apply before expired in the following link.
-                            </p>
-                            
-                            <div className="text-left">
+                          </p>
+                          
+                          <div className="text-left">
                                 <span className="text-blue-600  cursor-pointer">
                                     <strong>Click Here:</strong> <span className='underline'>Click Me</span>
                                 </span>
-                            </div>
+                          </div>
                         </div>
-                    </div>
+                      </div>
 
 
                     {/* Apply Section */}

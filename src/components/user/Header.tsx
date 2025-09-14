@@ -1,7 +1,8 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { authServices } from '../../services/authServices';
 
 interface HeaderProps {
   onMenuToggle?: () => void;
@@ -11,7 +12,36 @@ export default function Header({ onMenuToggle }: HeaderProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [dropdownTimeout, setDropdownTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState<any>(null);
   const pathname = usePathname();
+
+  // Check authentication status on component mount and when localStorage changes
+  useEffect(() => {
+    const checkAuthStatus = () => {
+      const authStatus = authServices.isAuthenticated();
+      const currentUser = authServices.getCurrentUser();
+      setIsAuthenticated(authStatus);
+      setUser(currentUser);
+    };
+
+    // Check initial auth status
+    checkAuthStatus();
+
+    // Listen for storage changes (when user logs in/out in another tab)
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'token' || e.key === 'user') {
+        checkAuthStatus();
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
 
   const navigationItems = [
     {
@@ -219,26 +249,43 @@ export default function Header({ onMenuToggle }: HeaderProps) {
 
             {/* Right side - User Profile & Notifications */}
             <div className="flex items-center space-x-4">
-              {/* Notifications */}
-              <button className="relative p-2 text-white hover:text-blue-200 hover:bg-blue-700/50 rounded-md transition-colors">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-5 5v-5zM10.5 3.75a6 6 0 0 1 6 6v7.5a2.25 2.25 0 0 1-2.25 2.25h-7.5A2.25 2.25 0 0 1 4.5 17.25v-7.5a6 6 0 0 1 6-6Z" />
-                </svg>
-                <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-              </button>
+              {isAuthenticated ? (
+                <>
+                  {/* Notifications - Only show when authenticated */}
+                  <button className="relative p-2 text-white hover:text-blue-200 hover:bg-blue-700/50 rounded-md transition-colors">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-5 5v-5zM10.5 3.75a6 6 0 0 1 6 6v7.5a2.25 2.25 0 0 1-2.25 2.25h-7.5A2.25 2.25 0 0 1 4.5 17.25v-7.5a6 6 0 0 1 6-6Z" />
+                    </svg>
+                    <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                  </button>
 
-              {/* User Profile */}
-              <div className="relative">
+                  {/* User Profile - Only show when authenticated */}
+                  <div className="relative">
+                    <Link href="/user/dashboard">
+                      <button className="text-white hover:text-blue-200 transition-colors">
+                        <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                          {user?.name ? (
+                            <span className="text-white font-semibold text-sm">
+                              {user.name.charAt(0).toUpperCase()}
+                            </span>
+                          ) : (
+                            <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                            </svg>
+                          )}
+                        </div>
+                      </button>
+                    </Link>
+                  </div>
+                </>
+              ) : (
+                /* Login Button - Only show when not authenticated */
                 <Link href="/auth/login">
-                  <button className="text-white hover:text-blue-200 transition-colors">
-                    <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
-                      <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                      </svg>
-                    </div>
+                  <button className="bg-white text-blue-900 px-4 py-2 rounded-md font-medium hover:bg-blue-50 transition-colors cursor-pointer">
+                    Login
                   </button>
                 </Link>
-              </div>
+              )}
             </div>
           </div>
         </div>
@@ -265,16 +312,37 @@ export default function Header({ onMenuToggle }: HeaderProps) {
 
             {/* Mobile Right Side */}
             <div className="flex items-center space-x-2">
-              <button className="relative p-2 text-white hover:text-blue-200 hover:bg-blue-700/50 rounded-md transition-colors">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-5 5v-5zM10.5 3.75a6 6 0 0 1 6 6v7.5a2.25 2.25 0 0 1-2.25 2.25h-7.5A2.25 2.25 0 0 1 4.5 17.25v-7.5a6 6 0 0 1 6-6Z" />
-              </svg>
-                <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-            </button>
+              {isAuthenticated ? (
+                <>
+                  {/* Notifications - Only show when authenticated */}
+                  <button className="relative p-2 text-white hover:text-blue-200 hover:bg-blue-700/50 rounded-md transition-colors">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-5 5v-5zM10.5 3.75a6 6 0 0 1 6 6v7.5a2.25 2.25 0 0 1-2.25 2.25h-7.5A2.25 2.25 0 0 1 4.5 17.25v-7.5a6 6 0 0 1 6-6Z" />
+                    </svg>
+                    <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                  </button>
 
-              <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
-                <span className="text-white font-semibold text-sm">U</span>
-              </div>
+                  {/* User Profile - Only show when authenticated */}
+                  <Link href="/user/dashboard">
+                    <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                      {user?.name ? (
+                        <span className="text-white font-semibold text-sm">
+                          {user.name.charAt(0).toUpperCase()}
+                        </span>
+                      ) : (
+                        <span className="text-white font-semibold text-sm">U</span>
+                      )}
+                    </div>
+                  </Link>
+                </>
+              ) : (
+                /* Login Button - Only show when not authenticated */
+                <Link href="/auth/login">
+                  <button className="bg-white text-blue-900 px-3 py-1 rounded-md font-medium text-sm hover:bg-blue-50 transition-colors cursor-pointer">
+                    Login
+                  </button>
+                </Link>
+              )}
             </div>
           </div>
         </div>

@@ -13,6 +13,10 @@ interface AuthResponse {
       mobile_no?: string;
       is_email_verified: boolean;
       is_active: boolean;
+      role?: {
+        id: string;
+        name: string;
+      } | null;
     };
     userId?: string;
   };

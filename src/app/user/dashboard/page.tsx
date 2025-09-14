@@ -1,10 +1,16 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { Icon } from '@iconify/react';
 import { useHydration } from '../../../hooks/useHydration';
+import { authServices } from '../../../services/authServices';
+import { showSuccessToast, showErrorToast } from '../../../utils/simpleToast';
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState('profile');
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const isHydrated = useHydration();
+  const router = useRouter();
 
   // Profile form state
   const [profileData, setProfileData] = useState({
@@ -22,6 +28,25 @@ export default function Dashboard() {
     pushNotifications: false,
     profileVisibility: true
   });
+
+  // Logout function
+  const handleLogout = async () => {
+    try {
+      setIsLoggingOut(true);
+      console.log('🚪 Logging out user...');
+      
+      await authServices.logout();
+      showSuccessToast('Logged out successfully!');
+      
+      // Redirect to login page
+      console.log('🧭 Redirecting to login page');
+      router.push('/auth/login');
+    } catch (error) {
+      console.error('❌ Logout error:', error);
+      showErrorToast('Failed to logout. Please try again.');
+      setIsLoggingOut(false);
+    }
+  };
 
   // Don't render until hydrated to prevent mismatch
   if (!isHydrated) {
@@ -319,9 +344,31 @@ export default function Dashboard() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         <div className="space-y-8 sm:space-y-4">
           {/* Page Header */}
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Dashboard</h1>
-            <p className="text-gray-600 mt-2 text-sm sm:text-base">Manage your profile, favorites, and settings.</p>
+          <div className="flex items-start justify-between">
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Dashboard</h1>
+              <p className="text-gray-600 mt-2 text-sm sm:text-base">Manage your profile, favorites, and settings.</p>
+            </div>
+            
+            {/* Logout Button */}
+            <button
+              onClick={handleLogout}
+              disabled={isLoggingOut}
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-600 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 hover:border-red-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              title="Logout"
+            >
+              {isLoggingOut ? (
+                <>
+                  <Icon icon="line-md:loading-loop" className="w-4 h-4" />
+                  <span>Logging out...</span>
+                </>
+              ) : (
+                <>
+                  <Icon icon="mdi:logout" className="w-4 h-4" />
+                  <span>Logout</span>
+                </>
+              )}
+            </button>
           </div>
 
           {/* Tabs */}

@@ -6,9 +6,23 @@ interface ToastOptions {
 
 class SimpleToast {
   private container: HTMLElement | null = null;
+  private isInitialized: boolean = false;
 
   constructor() {
+    // Don't initialize immediately - wait for client-side usage
+  }
+
+  private ensureInitialized() {
+    if (this.isInitialized) return;
+    
+    // Check if we're in a browser environment
+    if (typeof window === 'undefined' || typeof document === 'undefined') {
+      console.warn('SimpleToast: Not in browser environment, skipping initialization');
+      return;
+    }
+    
     this.createContainer();
+    this.isInitialized = true;
   }
 
   private createContainer() {
@@ -85,8 +99,14 @@ class SimpleToast {
   show(message: string, options: ToastOptions = {}) {
     const { duration = 3000, type = 'info' } = options;
     
-    // Ensure container is properly positioned
-    this.createContainer();
+    // Ensure we're initialized and in browser environment
+    this.ensureInitialized();
+    
+    // If not in browser environment, just log the message
+    if (!this.isInitialized || !this.container) {
+      console.log(`Toast (${type}): ${message}`);
+      return;
+    }
 
     // Create toast element
     const toast = document.createElement('div');
@@ -207,28 +227,35 @@ class SimpleToast {
   }
 }
 
-// Create singleton instance
-const simpleToast = new SimpleToast();
+// Lazy singleton instance
+let simpleToastInstance: SimpleToast | null = null;
+
+const getSimpleToast = (): SimpleToast => {
+  if (!simpleToastInstance) {
+    simpleToastInstance = new SimpleToast();
+  }
+  return simpleToastInstance;
+};
 
 // Export convenience functions
 export const showToast = (message: string, options?: ToastOptions) => {
-  simpleToast.show(message, options);
+  getSimpleToast().show(message, options);
 };
 
 export const showSuccessToast = (message: string, duration?: number) => {
-  simpleToast.success(message, duration);
+  getSimpleToast().success(message, duration);
 };
 
 export const showErrorToast = (message: string, duration?: number) => {
-  simpleToast.error(message, duration);
+  getSimpleToast().error(message, duration);
 };
 
 export const showInfoToast = (message: string, duration?: number) => {
-  simpleToast.info(message, duration);
+  getSimpleToast().info(message, duration);
 };
 
 export const showWarningToast = (message: string, duration?: number) => {
-  simpleToast.warning(message, duration);
+  getSimpleToast().warning(message, duration);
 };
 
-export default simpleToast;
+export default getSimpleToast;

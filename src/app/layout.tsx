@@ -9,11 +9,11 @@ const nunito = Nunito({
 });
 
 export const metadata: Metadata = {
-  title: "FresherJobCampus",
+  title: "offcampushiring",
   description: "The new way to learn",
   other: {
-    "76a6b0613935de405ae6a93b960fe678d9fbb602": "76a6b0613935de405ae6a93b960fe678d9fbb602",
-  },
+    "ezoic-site-verification": "KmqKzQFtFC3KCbxyV10VDpdHXOm5hr"
+  }
 };
 
 export default function RootLayout({

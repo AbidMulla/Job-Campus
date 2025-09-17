@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Icon } from '@iconify/react';
 import Link from 'next/link';
 import BreadCrumbs from '@/components/admin/BreadCrumbs';
@@ -10,20 +10,34 @@ import { showSuccessToast, showErrorToast } from '@/utils/simpleToast';
 export default function JobManagement() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('all');
-  const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedJobType, setSelectedJobType] = useState('all');
   const [selectedLocation, setSelectedLocation] = useState('all');
   const [selectedEmploymentType, setSelectedEmploymentType] = useState('all');
   const [selectedJobs, setSelectedJobs] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [recordsPerPage, setRecordsPerPage] = useState(10);
-  const [jobs, setJobs] = useState<any[]>([]);
+  const [jobs, setJobs] = useState<{
+    _id: string;
+    job_title: string;
+    company: string;
+    location: string;
+    job_type: string;
+    employment_type: string;
+    status: string;
+    job_post_date: string;
+    job_expire_date: string;
+    min_salary?: number;
+    max_salary?: number;
+    currency: string;
+    salary_type: string;
+    views?: number;
+  }[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalJobs, setTotalJobs] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
 
-  // Fetch jobs from API
-  const fetchJobs = async () => {
+  // Fetch jobs from API with useCallback to prevent re-renders
+  const fetchJobs = useCallback(async () => {
     try {
       setLoading(true);
       const params = {
@@ -51,14 +65,15 @@ export default function JobManagement() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentPage, recordsPerPage, searchTerm, selectedStatus, selectedJobType, selectedLocation, selectedEmploymentType]);
 
   // Effect to fetch jobs on component mount and when filters change
   useEffect(() => {
     fetchJobs();
-  }, [currentPage, recordsPerPage, searchTerm, selectedStatus, selectedJobType, selectedLocation, selectedEmploymentType]);
+  }, [fetchJobs]);
 
-  // Mock job data for fallback
+  // Mock job data for fallback (commented out as unused)
+  /*
   const mockJobs = [
     {
       id: 1,
@@ -361,9 +376,9 @@ export default function JobManagement() {
       salary: '$45k - $65k'
     }
   ];
+  */
 
   // Since filtering is done on the server side, we use jobs directly
-  const filteredJobs = jobs;
   const currentJobs = jobs;
   const startIndex = (currentPage - 1) * recordsPerPage;
   const endIndex = Math.min(startIndex + recordsPerPage, totalJobs);
@@ -433,22 +448,23 @@ export default function JobManagement() {
     );
   };
 
-  const getCategoryBadge = (category: string) => {
-    const categoryConfig = {
-      Development: { color: 'bg-blue-100 text-blue-800' },
-      Design: { color: 'bg-purple-100 text-purple-800' },
-      Management: { color: 'bg-indigo-100 text-indigo-800' },
-      Marketing: { color: 'bg-pink-100 text-pink-800' },
-      Finance: { color: 'bg-emerald-100 text-emerald-800' }
-    };
-    
-    const config = categoryConfig[category as keyof typeof categoryConfig] || { color: 'bg-gray-100 text-gray-800' };
-    return (
-      <span className={`px-2 py-1 rounded-full text-xs font-medium ${config.color}`}>
-        {category}
-      </span>
-    );
-  };
+  // Commented out unused function - keeping for potential future use
+  // const getCategoryBadge = (category: string) => {
+  //   const categoryConfig = {
+  //     Development: { color: 'bg-blue-100 text-blue-800' },
+  //     Design: { color: 'bg-purple-100 text-purple-800' },
+  //     Management: { color: 'bg-indigo-100 text-indigo-800' },
+  //     Marketing: { color: 'bg-pink-100 text-pink-800' },
+  //     Finance: { color: 'bg-emerald-100 text-emerald-800' }
+  //   };
+  //   
+  //   const config = categoryConfig[category as keyof typeof categoryConfig] || { color: 'bg-gray-100 text-gray-800' };
+  //   return (
+  //     <span className={`px-2 py-1 rounded-full text-xs font-medium ${config.color}`}>
+  //       {category}
+  //     </span>
+  //   );
+  // };
 
   const getJobTypeBadge = (jobType: string) => {
     const jobTypeConfig = {
@@ -469,20 +485,21 @@ export default function JobManagement() {
     );
   };
 
-  const getEmploymentTypeBadge = (employmentType: string) => {
-    const employmentTypeConfig = {
-      'Full-time': { color: 'bg-blue-100 text-blue-800' },
-      'Part-time': { color: 'bg-orange-100 text-orange-800' },
-      'Work from Home': { color: 'bg-purple-100 text-purple-800' }
-    };
-    
-    const config = employmentTypeConfig[employmentType as keyof typeof employmentTypeConfig] || { color: 'bg-gray-100 text-gray-800' };
-    return (
-      <span className={`px-2 py-1 rounded-full text-xs font-medium ${config.color}`}>
-        {employmentType}
-      </span>
-    );
-  };
+  // Commented out unused function - keeping for potential future use
+  // const getEmploymentTypeBadge = (employmentType: string) => {
+  //   const employmentTypeConfig = {
+  //     'Full-time': { color: 'bg-blue-100 text-blue-800' },
+  //     'Part-time': { color: 'bg-orange-100 text-orange-800' },
+  //     'Work from Home': { color: 'bg-purple-100 text-purple-800' }
+  //   };
+  //   
+  //   const config = employmentTypeConfig[employmentType as keyof typeof employmentTypeConfig] || { color: 'bg-gray-100 text-gray-800' };
+  //   return (
+  //     <span className={`px-2 py-1 rounded-full text-xs font-medium ${config.color}`}>
+  //       {employmentType}
+  //     </span>
+  //   );
+  // };
 
   return (
     <div className="space-y-2 relative">

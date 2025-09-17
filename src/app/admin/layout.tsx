@@ -2,7 +2,7 @@
 import { useState } from "react";
 import Header from "../../components/admin/Header";
 import Sidebar from "../../components/admin/Sidebar";
-import Footer from "../../components/admin/Footer";
+import { SidebarAd } from "@/components/ads/AdPlacements";
 
 export default function AdminLayout({
   children,
@@ -41,6 +41,11 @@ export default function AdminLayout({
         {/* Main Content */}
         <main className="flex-1 py-4 px-6">
           {children}
+          
+          {/* Sidebar Ad in Admin */}
+          <div className="mt-8">
+            <SidebarAd />
+          </div>
         </main>
 
         {/* Footer */}

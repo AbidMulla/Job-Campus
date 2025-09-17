@@ -29,11 +29,12 @@ export default function BreadCrumbs({ title, breadcrumbs, showBackButton = false
     return '/admin/dashboard';
   };
 
-  const handleBack = () => {
-    if (typeof window !== 'undefined') {
-      window.history.back();
-    }
-  };
+  // Commented out unused function
+  // const handleBack = () => {
+  //   if (typeof window !== 'undefined') {
+  //     window.history.back();
+  //   }
+  // };
 
   return (
     <div className="flex items-center justify-between py-2 px-6 bg-white rounded-lg shadow-sm border border-gray-200">

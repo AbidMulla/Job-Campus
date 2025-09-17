@@ -80,7 +80,11 @@ export default function Register() {
         console.log('🧭 Navigating to /auth/register-otp');
         router.push('/auth/register-otp');
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error && typeof error === 'object' && 'response' in error 
+        ? (error as { response?: { data?: { message?: string } } }).response?.data?.message 
+        : 'Registration failed. Please try again.';
+      showErrorToast(errorMessage || 'Registration failed. Please try again.');
       console.error('❌ Registration error:', error);
       showErrorToast(error.response?.data?.message || 'Registration failed. Please try again.');
     } finally {

@@ -1,16 +1,15 @@
 'use client';
-import { useState } from 'react';
-import { Icon } from '@iconify/react';
-import Link from 'next/link';
+// import { useState } from 'react';
 import BreadCrumbs from '@/components/admin/BreadCrumbs';
 
 export default function LandingPage() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedStatus, setSelectedStatus] = useState('all');
-  const [selectedType, setSelectedType] = useState('all');
-  const [selectedPages, setSelectedPages] = useState<number[]>([]);
+  // const [searchTerm] = useState('');
+  // const [selectedStatus] = useState('all');
+  // const [selectedType] = useState('all');
+  // const [selectedPages] = useState<number[]>([]);
 
-  // Mock landing page data
+  // Mock landing page data (commented out as unused)
+  /*
   const landingPages = [
     {
       id: 1,
@@ -233,47 +232,51 @@ export default function LandingPage() {
       createdDate: '2023-11-22'
     }
   ];
+  */
 
-  const filteredPages = landingPages.filter(page => {
-    const matchesSearch = page.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         page.slug.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = selectedStatus === 'all' || page.status === selectedStatus;
-    const matchesType = selectedType === 'all' || page.type === selectedType;
-    
-    return matchesSearch && matchesStatus && matchesType;
-  });
+  // Commented out unused variable
+  // const filteredPages = landingPages.filter(page => {
+  //   const matchesSearch = page.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //                        page.slug.toLowerCase().includes(searchTerm.toLowerCase());
+  //   const matchesStatus = selectedStatus === 'all' || page.status === selectedStatus;
+  //   const matchesType = selectedType === 'all' || page.type === selectedType;
+  //   
+  //   return matchesSearch && matchesStatus && matchesType;
+  // });
 
-  const getStatusBadge = (status: string) => {
-    const statusConfig = {
-      active: { color: 'bg-green-100 text-green-800', label: 'Active' },
-      inactive: { color: 'bg-red-100 text-red-800', label: 'Inactive' },
-      draft: { color: 'bg-yellow-100 text-yellow-800', label: 'Draft' }
-    };
-    
-    const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.active;
-    return (
-      <span className={`px-2 py-1 rounded-full text-xs font-medium ${config.color}`}>
-        {config.label}
-      </span>
-    );
-  };
+  // Commented out unused function
+  // const getStatusBadge = (status: string) => {
+  //   const statusConfig = {
+  //     active: { color: 'bg-green-100 text-green-800', label: 'Active' },
+  //     inactive: { color: 'bg-red-100 text-red-800', label: 'Inactive' },
+  //     draft: { color: 'bg-yellow-100 text-yellow-800', label: 'Draft' }
+  //   };
+  //   
+  //   const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.active;
+  //   return (
+  //     <span className={`px-2 py-1 rounded-full text-xs font-medium ${config.color}`}>
+  //       {config.label}
+  //     </span>
+  //   );
+  // };
 
-  const getTypeBadge = (type: string) => {
-    const typeConfig = {
-      'Main': { color: 'bg-blue-100 text-blue-800' },
-      'Static': { color: 'bg-purple-100 text-purple-800' },
-      'Dynamic': { color: 'bg-green-100 text-green-800' },
-      'Gallery': { color: 'bg-pink-100 text-pink-800' },
-      'Legal': { color: 'bg-gray-100 text-gray-800' }
-    };
-    
-    const config = typeConfig[type as keyof typeof typeConfig] || { color: 'bg-gray-100 text-gray-800' };
-    return (
-      <span className={`px-2 py-1 rounded-full text-xs font-medium ${config.color}`}>
-        {type}
-      </span>
-    );
-  };
+  // Commented out unused function
+  // const getTypeBadge = (type: string) => {
+  //   const typeConfig = {
+  //     'Main': { color: 'bg-blue-100 text-blue-800' },
+  //     'Static': { color: 'bg-purple-100 text-purple-800' },
+  //     'Dynamic': { color: 'bg-green-100 text-green-800' },
+  //     'Gallery': { color: 'bg-pink-100 text-pink-800' },
+  //     'Legal': { color: 'bg-gray-100 text-gray-800' }
+  //   };
+  //   
+  //   const config = typeConfig[type as keyof typeof typeConfig] || { color: 'bg-gray-100 text-gray-800' };
+  //   return (
+  //     <span className={`px-2 py-1 rounded-full text-xs font-medium ${config.color}`}>
+  //       {type}
+  //     </span>
+  //   );
+  // };
 
   return (
     <div className="space-y-2">

@@ -3,6 +3,7 @@ import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Icon } from '@iconify/react';
 import Link from 'next/link';
+import Image from 'next/image';
 import BreadCrumbs from '@/components/admin/BreadCrumbs';
 import { adminServices } from '@/services/adminServices';
 
@@ -45,8 +46,14 @@ interface JobData {
   og_site_name?: string;
   og_locale?: string;
   og_type?: string;
-  posted_by?: any;
-  last_modified_by?: any;
+  posted_by?: {
+    name?: string;
+    email?: string;
+  };
+  last_modified_by?: {
+    name?: string;
+    email?: string;
+  };
   createdAt: string;
   updatedAt: string;
 }
@@ -69,9 +76,8 @@ function JobDetailsContent() {
         setLoading(true);
         const response = await adminServices.viewJobById(jobId);
         console.log('response-----------------', response);
-
         if (response.success && response.data) {
-          setJob(response.data);
+          setJob(response.data as JobData);
         } else {
           setJob(null);
         }
@@ -446,9 +452,11 @@ function JobDetailsContent() {
                   <div>
                     <span className="font-medium text-gray-700">OG Image:</span>
                     <div className="mt-2">
-                      <img 
+                      <Image 
                         src={job.og_image} 
                         alt={job.og_image_alt || 'OpenGraph image'} 
+                        width={job.og_image_width || 300}
+                        height={job.og_image_height || 200}
                         className="max-w-xs rounded-lg border border-gray-200"
                       />
                       {job.og_image_alt && (

@@ -9,11 +9,14 @@ interface HeaderProps {
 }
 
 export default function Header({ onMenuToggle }: HeaderProps) {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [dropdownTimeout, setDropdownTimeout] = useState<NodeJS.Timeout | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<{
+    name?: string;
+    email?: string;
+    role?: string;
+  } | null>(null);
   const pathname = usePathname();
 
   // Check authentication status on component mount and when localStorage changes
@@ -142,9 +145,6 @@ export default function Header({ onMenuToggle }: HeaderProps) {
     }
   ];
 
-  const handleDropdownToggle = (itemName: string) => {
-    setActiveDropdown(activeDropdown === itemName ? null : itemName);
-  };
 
   const handleDropdownEnter = (itemName: string) => {
     if (dropdownTimeout) {
@@ -161,9 +161,6 @@ export default function Header({ onMenuToggle }: HeaderProps) {
     setDropdownTimeout(timeout);
   };
 
-  const closeDropdowns = () => {
-    setActiveDropdown(null);
-  };
 
   return (
     <>

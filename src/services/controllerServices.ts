@@ -115,12 +115,12 @@ axiosInstance.interceptors.response.use(
   }
 );
 
-// TypeScript interfaces
-interface ApiResponse<T = unknown> {
-  data: T;
-  message?: string;
-  success?: boolean;
-}
+// TypeScript interfaces (commented out as unused)
+// interface ApiResponse<T = unknown> {
+//   data: T;
+//   message?: string;
+//   success?: boolean;
+// }
 
 interface CustomConfig extends AxiosRequestConfig {
   headers?: Record<string, string>;

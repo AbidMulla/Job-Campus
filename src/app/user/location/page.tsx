@@ -3,8 +3,8 @@ import { useState } from 'react';
 import JobCard from '@/components/user/JobCard';
 
 export default function Location() {
-  const [selectedCity, setSelectedCity] = useState('all');
-  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCity] = useState('all');
+  const [searchTerm] = useState('');
 
   const cities = [
     { id: 'all', name: 'All Cities' },

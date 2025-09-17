@@ -1,5 +1,5 @@
 'use client';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { Icon } from '@iconify/react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -7,7 +7,7 @@ import BreadCrumbs from '@/components/admin/BreadCrumbs';
 import { adminServices } from '@/services/adminServices';
 import { showSuccessToast, showErrorToast } from '@/utils/simpleToast';
 
-export default function EditJob() {
+function EditJobContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const jobId = searchParams.get('id');
@@ -151,15 +151,15 @@ export default function EditJob() {
     return `${day}-${month}-${year}`;
   };
 
-  // Helper function to convert dd-mm-yyyy to yyyy-mm-dd for input
-  const formatDateForInput = (dateString: string) => {
-    if (!dateString) return '';
-    const parts = dateString.split('-');
-    if (parts.length === 3) {
-      return `${parts[2]}-${parts[1]}-${parts[0]}`;
-    }
-    return dateString;
-  };
+  // Helper function to convert dd-mm-yyyy to yyyy-mm-dd for input (commented out as unused)
+  // const formatDateForInput = (dateString: string) => {
+  //   if (!dateString) return '';
+  //   const parts = dateString.split('-');
+  //   if (parts.length === 3) {
+  //     return `${parts[2]}-${parts[1]}-${parts[0]}`;
+  //   }
+  //   return dateString;
+  // };
 
   // Function to generate slug from title
   const generateSlug = (title: string) => {
@@ -263,7 +263,7 @@ export default function EditJob() {
     try {
       new URL(string);
       return true;
-    } catch (_) {
+    } catch {
       return false;
     }
   };
@@ -409,21 +409,21 @@ export default function EditJob() {
   };
 
 
-  // Get formatted preview with title and description
-  const getFormattedPreview = () => {
-    let preview = '';
+  // Get formatted preview with title and description (commented out as unused)
+  // const getFormattedPreview = () => {
+  //   let preview = '';
 
-    if (formData.title) {
-      preview += formData.title;
-    }
+  //   if (formData.title) {
+  //     preview += formData.title;
+  //   }
 
-    if (formData.description) {
-      if (preview) preview += '\n\n';
-      preview += getFormattedDescription();
-    }
+  //   if (formData.description) {
+  //     if (preview) preview += '\n\n';
+  //     preview += getFormattedDescription();
+  //   }
 
-    return preview;
-  };
+  //   return preview;
+  // };
 
   // Handler to add preview content to selected items
   const handleAddToSelected = () => {
@@ -628,7 +628,7 @@ export default function EditJob() {
 
           // Parse title and description JSON if it exists
           if (job.title_and_description_json && Array.isArray(job.title_and_description_json)) {
-            const parsedItems = job.title_and_description_json.map((item: any, index: number) => ({
+            const parsedItems = job.title_and_description_json.map((item: { title?: string; description?: string | string[] }, index: number) => ({
               id: index + 1,
               title: item.title || '',
               description: Array.isArray(item.description) ? item.description.join('\n') : (item.description || ''),
@@ -642,7 +642,7 @@ export default function EditJob() {
             const keywords = job.seo_keywords.split(',').map((keyword: string, index: number) => ({
               id: index + 1,
               text: keyword.trim()
-            })).filter((keyword: any) => keyword.text.length > 0);
+            })).filter((keyword: { text: string }) => keyword.text.length > 0);
             
             if (keywords.length > 0) {
               setSeoKeywords(keywords);
@@ -651,7 +651,7 @@ export default function EditJob() {
         } else {
           setError('Job not found');
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error('Error fetching job:', error);
         setError('Failed to load job data');
       } finally {
@@ -782,38 +782,44 @@ export default function EditJob() {
           router.push('/admin/job-management');
         }, remainingTime);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error updating job:', error);
       let errorMessage = 'Failed to update job. Please try again.';
       
       // Extract proper error message from different error formats
-      if (error.response?.data?.message) {
-        // Backend error message
-        errorMessage = error.response.data.message;
-      } else if (error.response?.data?.error) {
-        // Alternative backend error format
-        errorMessage = error.response.data.error;
-      } else if (error.message && !error.message.includes('Request failed with status code')) {
-        // Other specific error messages
-        errorMessage = error.message;
-      } else if (error.response?.status === 400) {
-        // Handle 400 errors specifically
-        if (error.response.data?.errors) {
-          // Validation errors
-          const validationErrors = error.response.data.errors;
-          if (typeof validationErrors === 'object') {
-            const firstError = Object.values(validationErrors)[0];
-            errorMessage = Array.isArray(firstError) ? firstError[0] : firstError;
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as { response?: { data?: { message?: string; error?: string }; status?: number } };
+        if (axiosError.response?.data?.message) {
+          // Backend error message
+          errorMessage = axiosError.response.data.message;
+        } else if (axiosError.response?.data?.error) {
+          // Alternative backend error format
+          errorMessage = axiosError.response.data.error;
+        } else if (axiosError.response?.status === 400) {
+          // Handle 400 errors specifically
+          if (axiosError.response.data?.errors) {
+            // Validation errors
+            const validationErrors = axiosError.response.data.errors;
+            if (typeof validationErrors === 'object') {
+              const firstError = Object.values(validationErrors)[0];
+              errorMessage = Array.isArray(firstError) ? firstError[0] : firstError;
+            }
+          } else if (axiosError.response.data?.message) {
+            errorMessage = axiosError.response.data.message;
+          } else {
+            errorMessage = 'Invalid data provided. Please check your inputs and try again.';
           }
-        } else if (error.response.data?.message) {
-          errorMessage = error.response.data.message;
-        } else {
-          errorMessage = 'Invalid data provided. Please check your inputs and try again.';
+        } else if (axiosError.response?.status === 409) {
+          errorMessage = 'A job with this slug already exists. Please use a different slug.';
+        } else if (axiosError.response?.status === 500) {
+          errorMessage = 'Server error occurred. Please try again later.';
         }
-      } else if (error.response?.status === 409) {
-        errorMessage = 'A job with this slug already exists. Please use a different slug.';
-      } else if (error.response?.status === 500) {
-        errorMessage = 'Server error occurred. Please try again later.';
+      } else if (error && typeof error === 'object' && 'message' in error) {
+        const errorWithMessage = error as { message: string };
+        if (!errorWithMessage.message.includes('Request failed with status code')) {
+          // Other specific error messages
+          errorMessage = errorWithMessage.message;
+        }
       }
       
       setError(errorMessage);
@@ -1937,5 +1943,33 @@ export default function EditJob() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function EditJob() {
+  return (
+    <Suspense fallback={
+      <div className="space-y-2">
+        <BreadCrumbs
+          title="Edit Job"
+          breadcrumbs={[
+            { label: "Dashboard", href: "/admin/dashboard", icon: "fluent:grid-24-regular" },
+            { label: "Job Management", href: "/admin/job-management", icon: "fluent:briefcase-24-regular" },
+            { label: "Edit Job", icon: "fluent:edit-24-regular" }
+          ]}
+        />
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
+          <div className="flex flex-col items-center space-y-4">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            <div className="text-center">
+              <p className="text-lg font-semibold text-gray-900">Loading...</p>
+              <p className="text-sm text-gray-600 mt-1">Please wait while we load the edit form</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    }>
+      <EditJobContent />
+    </Suspense>
   );
 }

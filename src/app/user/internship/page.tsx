@@ -3,8 +3,8 @@ import { useState } from 'react';
 import JobCard from '@/components/user/JobCard';
 
 export default function Internship() {
-  const [selectedDuration, setSelectedDuration] = useState('all');
-  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedDuration] = useState('all');
+  const [searchTerm] = useState('');
 
   const durations = [
     { id: 'all', name: 'All Durations' },

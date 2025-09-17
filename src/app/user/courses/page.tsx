@@ -3,8 +3,8 @@ import { useState } from 'react';
 import JobCard from '@/components/user/JobCard';
 
 export default function Courses() {
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory] = useState('all');
+  const [searchTerm] = useState('');
 
   const categories = [
     { id: 'all', name: 'All Courses' },

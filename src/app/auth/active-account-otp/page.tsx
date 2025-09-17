@@ -34,9 +34,12 @@ export default function ActiveAccountOTP() {
             console.log('✅ Activation OTP sent successfully');
             showSuccessToast('Activation OTP sent to your email!');
           }
-        } catch (error: any) {
+        } catch (error: unknown) {
           console.error('❌ Failed to send activation OTP:', error);
-          showErrorToast(error.response?.data?.message || 'Failed to send activation OTP. Please try again.');
+          const errorMessage = error && typeof error === 'object' && 'response' in error 
+            ? (error as { response?: { data?: { message?: string } } }).response?.data?.message 
+            : 'Failed to send activation OTP. Please try again.';
+          showErrorToast(errorMessage || 'Failed to send activation OTP. Please try again.');
         }
       };
       
@@ -98,9 +101,12 @@ export default function ActiveAccountOTP() {
           router.push('/auth/login');
         }, 2000);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('❌ Activate account OTP verification error:', error);
-      showErrorToast(error.response?.data?.message || 'Invalid OTP. Please try again.');
+      const errorMessage = error && typeof error === 'object' && 'response' in error 
+        ? (error as { response?: { data?: { message?: string } } }).response?.data?.message 
+        : 'Invalid OTP. Please try again.';
+      showErrorToast(errorMessage || 'Invalid OTP. Please try again.');
       setIsLoading(false);
     }
   };
@@ -119,9 +125,12 @@ export default function ActiveAccountOTP() {
       if (response.success) {
         showSuccessToast('Activation OTP sent to your email!');
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('❌ Resend OTP error:', error);
-      showErrorToast(error.response?.data?.message || 'Failed to resend OTP. Please try again.');
+      const errorMessage = error && typeof error === 'object' && 'response' in error 
+        ? (error as { response?: { data?: { message?: string } } }).response?.data?.message 
+        : 'Failed to resend OTP. Please try again.';
+      showErrorToast(errorMessage || 'Failed to resend OTP. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -146,7 +155,7 @@ export default function ActiveAccountOTP() {
               <Icon icon="mdi:information" className="w-5 h-5 text-orange-600 mt-0.5 mr-2 flex-shrink-0" />
               <div className="text-sm text-orange-800">
                 <p className="font-medium mb-1">Account Activation Required</p>
-                <p>We've sent a 6-digit activation code to <strong>{email}</strong>. Enter the code below to activate your account.</p>
+                <p>We&apos;ve sent a 6-digit activation code to <strong>{email}</strong>. Enter the code below to activate your account.</p>
               </div>
             </div>
           </div>
@@ -197,7 +206,7 @@ export default function ActiveAccountOTP() {
           {/* Resend OTP */}
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600 mb-3">
-              Didn't receive the code?
+              Didn&apos;t receive the code?
             </p>
             <button
               onClick={handleResendOTP}

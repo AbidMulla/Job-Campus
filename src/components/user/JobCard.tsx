@@ -13,7 +13,6 @@ interface JobCardProps {
 }
 
 export default function JobCard({
-  id,
   title,
   company,
   description,

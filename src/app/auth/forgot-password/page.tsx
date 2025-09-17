@@ -61,7 +61,11 @@ export default function ForgotPassword() {
           router.push('/auth/forgot-password-otp');
         }, 2000);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error && typeof error === 'object' && 'response' in error 
+        ? (error as { response?: { data?: { message?: string } } }).response?.data?.message 
+        : 'Failed to send reset OTP. Please try again.';
+      showErrorToast(errorMessage || 'Failed to send reset OTP. Please try again.');
       console.error('❌ Forgot password error:', error);
       showErrorToast(error.response?.data?.message || 'Failed to send reset link. Please try again.');
     } finally {

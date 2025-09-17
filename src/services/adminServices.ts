@@ -4,7 +4,7 @@ import ApiController from './controllerServices';
 interface JobResponse {
   success: boolean;
   message: string;
-  data?: any;
+  data?: unknown;
   pagination?: {
     current: number;
     pages: number;
@@ -15,19 +15,19 @@ interface JobResponse {
 // Admin Services
 export const adminServices = {
   // Get admin profile
-  getAdminProfile: async (adminId: string) => {
+  getAdminProfile: async (_adminId: string) => {
     // TODO: Implement API call to get admin profile
-    return { adminId, name: 'Admin Name', email: 'admin@example.com', role: 'admin' };
+    return { adminId: _adminId, name: 'Admin Name', email: 'admin@example.com', role: 'admin' };
   },
 
   // Update admin profile
-  updateAdminProfile: async (adminId: string, data: Record<string, unknown>) => {
+  updateAdminProfile: async () => {
     // TODO: Implement API call to update admin profile
     return { success: true, message: 'Admin profile updated successfully' };
   },
 
   // Get admin dashboard data
-  getDashboardData: async (adminId: string) => {
+  getDashboardData: async () => {
     // TODO: Implement API call to get admin dashboard data
     return { users: [], courses: [], analytics: {} };
   },
@@ -45,7 +45,7 @@ export const adminServices = {
   },
 
   // Job Management Services
-  addJob: async (jobData: any): Promise<JobResponse> => {
+  addJob: async (jobData: Record<string, unknown>): Promise<JobResponse> => {
     try {
       const response = await ApiController.post<JobResponse>('/admin/add-job', jobData);
       return response;
@@ -102,7 +102,7 @@ export const adminServices = {
     }
   },
 
-  updateJob: async (jobId: string, jobData: any): Promise<JobResponse> => {
+  updateJob: async (jobId: string, jobData: Record<string, unknown>): Promise<JobResponse> => {
     try {
       const response = await ApiController.put<JobResponse>(`/admin/jobs/${jobId}`, jobData);
       return response;

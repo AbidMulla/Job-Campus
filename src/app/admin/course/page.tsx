@@ -4,7 +4,7 @@ import { Icon } from '@iconify/react';
 import Link from 'next/link';
 import BreadCrumbs from '@/components/admin/BreadCrumbs';
 
-export default function Course() {
+function Course() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('all');
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -621,3 +621,5 @@ export default function Course() {
     </div>
   );
 }
+
+export default Course;

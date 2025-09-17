@@ -188,13 +188,14 @@ class SimpleToast {
     }, duration);
 
     // Store timeout ID for manual removal
-    (toast as any).timeoutId = timeoutId;
+    (toast as HTMLElement & { timeoutId?: NodeJS.Timeout }).timeoutId = timeoutId;
   }
 
   private removeToast(toast: HTMLElement) {
     // Clear timeout if exists
-    if ((toast as any).timeoutId) {
-      clearTimeout((toast as any).timeoutId);
+    const toastWithTimeout = toast as HTMLElement & { timeoutId?: NodeJS.Timeout };
+    if (toastWithTimeout.timeoutId) {
+      clearTimeout(toastWithTimeout.timeoutId);
     }
 
     // Animate out with smooth exit

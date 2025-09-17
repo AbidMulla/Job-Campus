@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { Icon } from '@iconify/react';
+import Image from 'next/image';
 
 export default function AdminProfile() {
   const [profileData] = useState({
@@ -29,9 +30,11 @@ export default function AdminProfile() {
           <div className="flex items-center space-x-6">
             {/* Avatar */}
             <div className="relative">
-              <img
+              <Image
                 src={profileData.avatar}
                 alt="Profile"
+                width={80}
+                height={80}
                 className="w-20 h-20 rounded-full object-cover border-4 border-white shadow-lg"
               />
               <button className="absolute bottom-0 right-0 bg-blue-600 text-white rounded-full p-2 hover:bg-blue-700 transition-colors">

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Nunito } from "next/font/google";
 import "./globals.css";
+import { BannerAd } from "@/components/ads/AdPlacements";
 
 const nunito = Nunito({
   weight: ['300', '400', '500', '600', '700'],
@@ -26,6 +27,9 @@ export default function RootLayout({
       <body
         className={`${nunito.variable} antialiased`}
       >
+        {/* Top Banner Ad */}
+        <BannerAd />
+        
         {/* Root Layout - This wraps ALL other layouts automatically */}
         <div className="app-container">
           {children}

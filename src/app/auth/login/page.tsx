@@ -149,7 +149,11 @@ export default function Login() {
           return;
         }
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error && typeof error === 'object' && 'response' in error 
+        ? (error as { response?: { data?: { message?: string } } }).response?.data?.message 
+        : 'Login failed. Please try again.';
+      showErrorToast(errorMessage || 'Login failed. Please try again.');
       console.error('❌ Login error:', error);
       console.log('🔍 Error response data:', error.response?.data);
       

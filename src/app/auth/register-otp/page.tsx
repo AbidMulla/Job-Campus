@@ -61,7 +61,11 @@ export default function RegisterOTP() {
         console.log('🎉 OTP resent successfully');
         showSuccessToast('OTP sent successfully!');
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error && typeof error === 'object' && 'response' in error 
+        ? (error as { response?: { data?: { message?: string } } }).response?.data?.message 
+        : 'Invalid OTP. Please try again.';
+      showErrorToast(errorMessage || 'Invalid OTP. Please try again.');
       console.error('❌ Resend OTP error:', error);
       showErrorToast(error.response?.data?.message || 'Failed to resend OTP. Please try again.');
     } finally {
@@ -105,7 +109,11 @@ export default function RegisterOTP() {
           router.push('/auth/login');
         }, 2000);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error && typeof error === 'object' && 'response' in error 
+        ? (error as { response?: { data?: { message?: string } } }).response?.data?.message 
+        : 'Invalid OTP. Please try again.';
+      showErrorToast(errorMessage || 'Invalid OTP. Please try again.');
       console.error('❌ OTP verification error:', error);
       showErrorToast(error.response?.data?.message || 'Invalid OTP. Please try again.');
       setIsLoading(false);

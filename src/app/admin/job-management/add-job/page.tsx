@@ -1,5 +1,5 @@
 'use client';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Icon } from '@iconify/react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -166,15 +166,6 @@ export default function AddJob() {
     return `${day}-${month}-${year}`;
   };
 
-  // Helper function to convert dd-mm-yyyy to yyyy-mm-dd for input
-  const formatDateForInput = (dateString: string) => {
-    if (!dateString) return '';
-    const parts = dateString.split('-');
-    if (parts.length === 3) {
-      return `${parts[2]}-${parts[1]}-${parts[0]}`;
-    }
-    return dateString;
-  };
 
   // Function to generate slug from title
   const generateSlug = (title: string) => {
@@ -278,7 +269,7 @@ export default function AddJob() {
     try {
       new URL(string);
       return true;
-    } catch (_) {
+    } catch {
       return false;
     }
   };
@@ -424,21 +415,6 @@ export default function AddJob() {
   };
 
 
-  // Get formatted preview with title and description
-  const getFormattedPreview = () => {
-    let preview = '';
-
-    if (formData.title) {
-      preview += formData.title;
-    }
-
-    if (formData.description) {
-      if (preview) preview += '\n\n';
-      preview += getFormattedDescription();
-    }
-
-    return preview;
-  };
 
   // Handler to add preview content to selected items
   const handleAddToSelected = () => {
@@ -694,38 +670,44 @@ export default function AddJob() {
           router.push('/admin/job-management');
         }, remainingTime);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error creating job:', error);
       let errorMessage = 'Failed to create job. Please try again.';
       
       // Extract proper error message from different error formats
-      if (error.response?.data?.message) {
-        // Backend error message
-        errorMessage = error.response.data.message;
-      } else if (error.response?.data?.error) {
-        // Alternative backend error format
-        errorMessage = error.response.data.error;
-      } else if (error.message && !error.message.includes('Request failed with status code')) {
-        // Other specific error messages
-        errorMessage = error.message;
-      } else if (error.response?.status === 400) {
-        // Handle 400 errors specifically
-        if (error.response.data?.errors) {
-          // Validation errors
-          const validationErrors = error.response.data.errors;
-          if (typeof validationErrors === 'object') {
-            const firstError = Object.values(validationErrors)[0];
-            errorMessage = Array.isArray(firstError) ? firstError[0] : firstError;
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as { response?: { data?: { message?: string; error?: string }; status?: number } };
+        if (axiosError.response?.data?.message) {
+          // Backend error message
+          errorMessage = axiosError.response.data.message;
+        } else if (axiosError.response?.data?.error) {
+          // Alternative backend error format
+          errorMessage = axiosError.response.data.error;
+        } else if (axiosError.response?.status === 400) {
+          // Handle 400 errors specifically
+          if (axiosError.response.data?.errors) {
+            // Validation errors
+            const validationErrors = axiosError.response.data.errors;
+            if (typeof validationErrors === 'object') {
+              const firstError = Object.values(validationErrors)[0];
+              errorMessage = Array.isArray(firstError) ? firstError[0] : firstError;
+            }
+          } else if (axiosError.response.data?.message) {
+            errorMessage = axiosError.response.data.message;
+          } else {
+            errorMessage = 'Invalid data provided. Please check your inputs and try again.';
           }
-        } else if (error.response.data?.message) {
-          errorMessage = error.response.data.message;
-        } else {
-          errorMessage = 'Invalid data provided. Please check your inputs and try again.';
+        } else if (axiosError.response?.status === 409) {
+          errorMessage = 'A job with this slug already exists. Please use a different slug.';
+        } else if (axiosError.response?.status === 500) {
+          errorMessage = 'Server error occurred. Please try again later.';
         }
-      } else if (error.response?.status === 409) {
-        errorMessage = 'A job with this slug already exists. Please use a different slug.';
-      } else if (error.response?.status === 500) {
-        errorMessage = 'Server error occurred. Please try again later.';
+      } else if (error && typeof error === 'object' && 'message' in error) {
+        const errorWithMessage = error as { message: string };
+        if (!errorWithMessage.message.includes('Request failed with status code')) {
+          // Other specific error messages
+          errorMessage = errorWithMessage.message;
+        }
       }
       
       setError(errorMessage);

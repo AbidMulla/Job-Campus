@@ -1,38 +1,6 @@
-// SEO Metadata
-export const metadata = {
-  title: "TCS iON NQT National Qualifier Test For Fresher | Job Details",
-  description: "Apply now for TCS iON NQT National Qualifier Test for freshers. Explore job details, eligibility, skills required, and how to apply.",
-  keywords: [
-    "TCS iON NQT",
-    "TCS jobs 2025",
-    "Tata Consultancy Services careers",
-    "Software Engineer fresher jobs",
-    "Off campus drive",
-    "IT jobs in Hyderabad",
-    "Capgemini jobs",
-    "Entry level software jobs",
-  ],
-  openGraph: {
-    title: "TCS iON NQT National Qualifier Test For Fresher | Job Details",
-    description: "Apply now for TCS iON NQT National Qualifier Test for freshers. Explore job details, eligibility, skills required, and how to apply.",
-    url: "https://yourwebsite.com/job-details/tcs-ion-nqt",
-    siteName: "Your Career Portal",
-    images: [
-      {
-        url: "/tcs-ion-banner.png",
-        width: 1200,
-        height: 630,
-        alt: "TCS iON NQT Job",
-      },
-    ],
-    locale: "en_US",
-    type: "website",
-  },
-};
-
 'use client';
-import Image from 'next/image';
-import Link from 'next/link';
+// import Image from 'next/image';
+// import Link from 'next/link';
 import { Icon } from '@iconify/react';
 
 export default function JobDetailsPage() {

@@ -4,7 +4,6 @@ import { Icon } from '@iconify/react';
 import BreadCrumbs from '@/components/admin/BreadCrumbs';
 
 export default function AdminDashboard() {
-  const [selectedPeriod, setSelectedPeriod] = useState('7d');
   const [notes, setNotes] = useState([
     {
       id: 1,
@@ -40,117 +39,6 @@ export default function AdminDashboard() {
     setNotes(notes.filter(note => note.id !== id));
   };
 
-  const stats = [
-    {
-      title: 'Total Users',
-      value: '12,847',
-      change: '+12%',
-      changeType: 'positive',
-      icon: (
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
-        </svg>
-      )
-    },
-    {
-      title: 'Active Jobs',
-      value: '1,234',
-      change: '+8%',
-      changeType: 'positive',
-      icon: (
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6a2 2 0 01-2 2H8a2 2 0 01-2-2V8a2 2 0 012-2V6" />
-        </svg>
-      )
-    },
-    {
-      title: 'Applications',
-      value: '5,678',
-      change: '+23%',
-      changeType: 'positive',
-      icon: (
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-        </svg>
-      )
-    },
-    {
-      title: 'Companies',
-      value: '456',
-      change: '+5%',
-      changeType: 'positive',
-      icon: (
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-        </svg>
-      )
-    }
-  ];
-
-  const recentActivities = [
-    {
-      id: 1,
-      type: 'application',
-      message: 'John Doe applied for Software Engineer at TCS',
-      time: '2 minutes ago',
-      status: 'pending'
-    },
-    {
-      id: 2,
-      type: 'user',
-      message: 'New user Sarah Wilson registered',
-      time: '5 minutes ago',
-      status: 'completed'
-    },
-    {
-      id: 3,
-      type: 'job',
-      message: 'New job posted: Data Analyst at Infosys',
-      time: '10 minutes ago',
-      status: 'completed'
-    },
-    {
-      id: 4,
-      type: 'company',
-      message: 'Company Wipro verified successfully',
-      time: '1 hour ago',
-      status: 'completed'
-    },
-    {
-      id: 5,
-      type: 'application',
-      message: 'Application rejected for Frontend Developer',
-      time: '2 hours ago',
-      status: 'rejected'
-    }
-  ];
-
-  const topJobs = [
-    {
-      title: 'Software Engineer',
-      company: 'TCS',
-      applications: 45,
-      status: 'active'
-    },
-    {
-      title: 'Data Analyst',
-      company: 'Infosys',
-      applications: 32,
-      status: 'active'
-    },
-    {
-      title: 'Frontend Developer',
-      company: 'Wipro',
-      applications: 28,
-      status: 'active'
-    },
-    {
-      title: 'Backend Developer',
-      company: 'HCL',
-      applications: 25,
-      status: 'active'
-    }
-  ];
 
   return (
     <div className="space-y-2">

@@ -277,7 +277,7 @@ export default function PostedJobs() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredJobs.map((job, index) => (
+              {filteredJobs.map((job) => (
                 <tr 
                   key={job.id} 
                   className="hover:bg-gray-50 cursor-pointer group"

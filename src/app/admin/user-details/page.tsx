@@ -1,7 +1,8 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import { Icon } from '@iconify/react';
-import Link from 'next/link';
+// import Link from 'next/link';
+import Image from 'next/image';
 import BreadCrumbs from '@/components/admin/BreadCrumbs';
 
 export default function UserDetails() {
@@ -76,31 +77,33 @@ export default function UserDetails() {
     { id: 3, page: 'Course Catalog', timestamp: '2024-01-20 10:00', duration: '8m 12s' }
   ];
 
-  const getStatusBadge = (status: string) => {
-    const statusConfig = {
-      'completed': { color: 'bg-green-100 text-green-800', label: 'Completed' },
-      'in-progress': { color: 'bg-blue-100 text-blue-800', label: 'In Progress' },
-      'pending': { color: 'bg-yellow-100 text-yellow-800', label: 'Pending' }
-    };
-    
-    const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.pending;
-    return (
-      <span className={`px-2 py-1 rounded-full text-xs font-medium ${config.color}`}>
-        {config.label}
-      </span>
-    );
-  };
+  // Commented out unused function
+  // const getStatusBadge = (status: string) => {
+  //   const statusConfig = {
+  //     'completed': { color: 'bg-green-100 text-green-800', label: 'Completed' },
+  //     'in-progress': { color: 'bg-blue-100 text-blue-800', label: 'In Progress' },
+  //     'pending': { color: 'bg-yellow-100 text-yellow-800', label: 'Pending' }
+  //   };
+  //   
+  //   const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.pending;
+  //   return (
+  //     <span className={`px-2 py-1 rounded-full text-xs font-medium ${config.color}`}>
+  //       {config.label}
+  //     </span>
+  //   );
+  // };
 
-  const getProgressBar = (progress: number) => {
-    return (
-      <div className="w-full bg-gray-200 rounded-full h-2">
-        <div 
-          className="bg-blue-600 h-2 rounded-full transition-all duration-300" 
-          style={{ width: `${progress}%` }}
-        ></div>
-      </div>
-    );
-  };
+  // Commented out unused function
+  // const getProgressBar = (progress: number) => {
+  //   return (
+  //     <div className="w-full bg-gray-200 rounded-full h-2">
+  //       <div 
+  //         className="bg-blue-600 h-2 rounded-full transition-all duration-300" 
+  //         style={{ width: `${progress}%` }}
+  //       ></div>
+  //     </div>
+  //   );
+  // };
 
   return (
     <div className="space-y-2">
@@ -122,11 +125,13 @@ export default function UserDetails() {
            {/* Part 1: Avatar and Name */}
            <div className="text-center m-4">
              <div className="h-24 w-24 rounded-full overflow-hidden mb-3 mx-auto">
-               <img 
-                 src="/photos/profile/default_profile.png" 
-                 alt={`${user.name}'s profile picture`}
-                 className="w-full h-full object-cover"
-               />
+              <Image 
+                src="/photos/profile/default_profile.png" 
+                alt={`${user.name}'s profile picture`}
+                width={96}
+                height={96}
+                className="w-full h-full object-cover"
+              />
              </div>
              <hr />
              <h1 className="text-xl font-bold text-gray-900 lowercase">{user.name}</h1>

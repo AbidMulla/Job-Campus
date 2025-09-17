@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { Icon } from '@iconify/react';
 import Header from '@/components/user/Header';
@@ -8,6 +8,7 @@ import JobCard from '@/components/user/JobCard';
 import MovingLogos from '@/components/user/MovingLogos';
 import CustomerReview from '@/components/user/CustomerReview';
 import Footer from '@/components/user/Footer';
+import { ContentAd, InArticleAd } from '@/components/ads/AdPlacements';
 
 
 export default function Home() {
@@ -303,9 +304,14 @@ export default function Home() {
           {/* Moving Logos Section */}
           <MovingLogos />
 
+          {/* Content Ad */}
+          <ContentAd />
 
           {/* Customer Reviews Section */}
           <CustomerReview />
+          
+          {/* In-Article Ad */}
+          <InArticleAd />
 
 
 

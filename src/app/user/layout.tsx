@@ -3,7 +3,7 @@ import { useState } from "react";
 import Header from "@/components/user/Header";
 import Sidebar from "@/components/user/Sidebar";
 import Footer from "@/components/user/Footer";
-import { HeaderAd, FooterAd } from "@/components/ads/AdPlacements";
+import { HeaderAd, FooterAd } from "@/components/adsense/AdPlacements";
 
 export default function UserLayout({
   children,

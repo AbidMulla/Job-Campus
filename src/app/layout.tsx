@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Nunito } from "next/font/google";
 import "./globals.css";
-import { BannerAd } from "@/components/ads/AdPlacements";
+import AdSenseScript from "@/components/adsense/AdSenseScript";
+import { BannerAd } from "@/components/adsense/AdPlacements";
 
 const nunito = Nunito({
   weight: ['300', '400', '500', '600', '700'],
@@ -11,10 +12,7 @@ const nunito = Nunito({
 
 export const metadata: Metadata = {
   title: "offcampushiring",
-  description: "The new way to learn",
-  other: {
-    "ezoic-site-verification": "KmqKzQFtFC3KCbxyV10VDpdHXOm5hr"
-  }
+  description: "The new way to learn"
 };
 
 export default function RootLayout({
@@ -24,6 +22,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <AdSenseScript />
+      </head>
       <body
         className={`${nunito.variable} antialiased`}
       >

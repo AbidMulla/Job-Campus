@@ -2,7 +2,7 @@
 import { useState } from "react";
 import Header from "../../components/admin/Header";
 import Sidebar from "../../components/admin/Sidebar";
-import { SidebarAd } from "@/components/ads/AdPlacements";
+import { SidebarAd } from "@/components/adsense/AdPlacements";
 
 export default function AdminLayout({
   children,

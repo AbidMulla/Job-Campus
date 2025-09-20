@@ -1,3 +1,1 @@
-# Replace pub-XXXXXXXXXXXXXXXX with your actual Google AdSense Publisher ID from Ezoic dashboard
-google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0
-ezoic.com, 19390, RESELLER
+google.com, pub-9751621049303254, DIRECT, f08c47fec0942fa0

@@ -8,7 +8,7 @@ import JobCard from '@/components/user/JobCard';
 import MovingLogos from '@/components/user/MovingLogos';
 import CustomerReview from '@/components/user/CustomerReview';
 import Footer from '@/components/user/Footer';
-import { ContentAd, InArticleAd } from '@/components/ads/AdPlacements';
+import { ContentAd, InArticleAd, MobileAd, DesktopAd } from '@/components/adsense/AdPlacements';
 
 
 export default function Home() {
@@ -306,6 +306,10 @@ export default function Home() {
 
           {/* Content Ad */}
           <ContentAd />
+
+          {/* Mobile/Desktop Specific Ads */}
+          <MobileAd />
+          <DesktopAd />
 
           {/* Customer Reviews Section */}
           <CustomerReview />

@@ -3,7 +3,6 @@ import { useState } from "react";
 import Header from "@/components/user/Header";
 import Sidebar from "@/components/user/Sidebar";
 import Footer from "@/components/user/Footer";
-import { HeaderAd, FooterAd } from "@/components/adsense/AdPlacements";
 
 export default function UserLayout({
   children,
@@ -29,17 +28,11 @@ export default function UserLayout({
 
       {/* Header */}
       <Header onMenuToggle={handleMenuToggle} />
-      
-      {/* Header Ad */}
-      <HeaderAd />
 
       {/* Main Content */}
       <main className="flex-1">
         {children}
       </main>
-
-      {/* Footer Ad */}
-      <FooterAd />
       
       {/* Footer */}
       <Footer />

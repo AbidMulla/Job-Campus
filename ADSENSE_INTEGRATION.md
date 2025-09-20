@@ -1,8 +1,8 @@
-# Google AdSense Integration Guide
+# Google AdSense Auto Ads Integration Guide
 
-This document outlines the complete Google AdSense integration implemented in your Next.js application following the [official Google AdSense documentation](https://support.google.com/adsense/answer/12171612?hl=en&visit_id=01758361979128-365473257273669842&rd=1).
+This document outlines the complete Google AdSense **Auto Ads** integration implemented in your Next.js application following the [official Google AdSense documentation](https://support.google.com/adsense/answer/12171612?hl=en&visit_id=01758361979128-365473257273669842&rd=1).
 
-## ✅ Integration Complete
+## ✅ Auto Ads Integration Complete
 
 ### Step 1: Ads.txt Setup ✅
 
@@ -17,44 +17,38 @@ This document outlines the complete Google AdSense integration implemented in yo
 google.com, pub-9751621049303254, DIRECT, f08c47fec0942fa0
 ```
 
-### Step 2: AdSense Script Integration ✅
+### Step 2: Auto Ads Script Integration ✅
 
 **Component:** `src/components/adsense/AdSenseScript.tsx`
 
+- ✅ Auto Ads enabled with `enable_page_level_ads: true`
 - ✅ Async loading for optimal performance
 - ✅ Proper Next.js Script component usage
 - ✅ Cross-origin handling
 - ✅ Integrated into main layout
 
-**Script Details:**
+**Auto Ads Configuration:**
 ```javascript
-// AdSense Script URL
-https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9751621049303254
+// AdSense Auto Ads Script
+(adsbygoogle = window.adsbygoogle || []).push({
+  google_ad_client: "ca-pub-9751621049303254",
+  enable_page_level_ads: true
+});
 ```
 
-### Step 3: Ad Components ✅
+### Step 3: Auto Ads Integration ✅
 
-**Components Created:**
-- `src/components/adsense/GoogleAdSense.tsx` - Base AdSense component
-- `src/components/adsense/AdPlacements.tsx` - Pre-configured ad placements
-
-**Ad Types Implemented:**
-- ✅ BannerAd - Top banner
-- ✅ HeaderAd - Header section
-- ✅ SidebarAd - Right sidebar
-- ✅ ContentAd - Between content sections
-- ✅ FooterAd - Bottom of page
-- ✅ MobileAd - Mobile specific
-- ✅ DesktopAd - Desktop specific
-- ✅ InArticleAd - Within article content
-
-### Step 4: Layout Integration ✅
+**What Auto Ads Does:**
+- ✅ Automatically places ads across all pages
+- ✅ Optimizes ad placement for maximum revenue
+- ✅ No manual ad placement required
+- ✅ Responsive across all devices
+- ✅ Uses machine learning for optimal positioning
 
 **Integration Points:**
-- ✅ Main Layout (`src/app/layout.tsx`) - Banner ads + AdSense script
-- ✅ User Layout (`src/app/user/layout.tsx`) - Header and footer ads
-- ✅ Admin Layout (`src/app/admin/layout.tsx`) - Sidebar ads
-- ✅ Home Page (`src/app/page.tsx`) - Content, mobile, desktop, and in-article ads
+- ✅ Main Layout (`src/app/layout.tsx`) - AdSense Auto Ads script loaded
+- ✅ All pages automatically covered - No manual placement needed
+- ✅ Works on user pages, admin pages, and all other routes
 
 ## 🎯 Ad Placement Configuration
 

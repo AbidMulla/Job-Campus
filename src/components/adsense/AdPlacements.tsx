@@ -1,15 +1,15 @@
 'use client';
 import GoogleAdSense from './GoogleAdSense';
 
-// ⚠️ IMPORTANT: Replace the placeholder ad slot IDs below with actual ad slot IDs from your Google AdSense dashboard
-// Current ad slots are placeholders and need to be updated after creating ad units in AdSense
+// ✅ Ad Slot ID Updated: Using actual AdSense ad slot ID: 7178314410
+// All ad placements now use the same ad slot ID as provided
 
 // Header Ad - Top of page (Banner style)
 export function HeaderAd() {
   return (
     <div className="w-full text-center py-2 bg-gray-50">
       <GoogleAdSense 
-        adSlot="1234567890" // Replace with your actual ad slot ID
+        adSlot="7178314410"
         adFormat="horizontal"
         className="w-full"
         style={{ minHeight: '90px' }}
@@ -23,7 +23,7 @@ export function SidebarAd() {
   return (
     <div className="w-full text-center bg-gray-50 p-2 rounded">
       <GoogleAdSense 
-        adSlot="1234567891" // Replace with your actual ad slot ID
+        adSlot="7178314410"
         adFormat="rectangle"
         className="w-full"
         style={{ minHeight: '250px' }}
@@ -37,7 +37,7 @@ export function ContentAd() {
   return (
     <div className="w-full text-center my-6 bg-gray-50 p-4 rounded">
       <GoogleAdSense 
-        adSlot="1234567892" // Replace with your actual ad slot ID
+        adSlot="7178314410"
         adFormat="auto"
         className="w-full"
         style={{ minHeight: '250px' }}
@@ -51,7 +51,7 @@ export function FooterAd() {
   return (
     <div className="w-full text-center py-4 bg-gray-50">
       <GoogleAdSense 
-        adSlot="1234567893" // Replace with your actual ad slot ID
+        adSlot="7178314410"
         adFormat="horizontal"
         className="w-full"
         style={{ minHeight: '90px' }}
@@ -65,7 +65,7 @@ export function MobileAd() {
   return (
     <div className="w-full text-center md:hidden bg-gray-50 p-2 rounded my-4">
       <GoogleAdSense 
-        adSlot="1234567894" // Replace with your actual ad slot ID
+        adSlot="7178314410"
         adFormat="auto"
         className="w-full"
         style={{ minHeight: '250px' }}
@@ -79,7 +79,7 @@ export function DesktopAd() {
   return (
     <div className="hidden md:block w-full text-center bg-gray-50 p-2 rounded my-4">
       <GoogleAdSense 
-        adSlot="1234567895" // Replace with your actual ad slot ID
+        adSlot="7178314410"
         adFormat="auto"
         className="w-full"
         style={{ minHeight: '250px' }}
@@ -93,7 +93,7 @@ export function InArticleAd() {
   return (
     <div className="w-full text-center my-8 bg-gray-50 p-4 rounded">
       <GoogleAdSense 
-        adSlot="1234567896" // Replace with your actual ad slot ID
+        adSlot="7178314410"
         adFormat="fluid"
         className="w-full"
         style={{ minHeight: '250px' }}
@@ -107,7 +107,7 @@ export function BannerAd() {
   return (
     <div className="w-full text-center bg-gray-100 py-2">
       <GoogleAdSense 
-        adSlot="1234567897" // Replace with your actual ad slot ID
+        adSlot="7178314410"
         adFormat="horizontal"
         className="w-full"
         style={{ minHeight: '90px' }}
